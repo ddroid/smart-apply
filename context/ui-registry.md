@@ -61,3 +61,39 @@ After building any component — update this file with the component name, file 
 - **Section Wrapper**: `relative w-full py-24 px-6 overflow-hidden flex flex-col items-center border-t border-border`
 - **Background Glow**: `bg-gradient-to-t from-accent-light/30 via-background/10 to-background`
 - **Buttons**: Matches Hero CTA styling.
+
+### Auth Components
+
+#### Login Page (Official Theme)
+
+File: [LoginManager.tsx](file:///home/ddroid/Projects/job-pilot/components/auth/LoginManager.tsx)
+Last updated: 2026-06-07
+
+| Property         | Class                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Background       | `bg-surface` (Left login panel), `bg-[#0f111a]` (Right fluid art panel)                                           |
+| Border           | `border-border-light` (Google/GitHub CTAs), `border-white/10` (Right side screenshot preview), `border-border` (Separator) |
+| Border radius    | `rounded-full` (Google/GitHub CTAs), `rounded-2xl` (Right side screenshot preview)                                |
+| Text — primary   | `text-text-primary` (form header), `text-white` (panel heading)                                                    |
+| Text — secondary | `text-text-secondary` (form description), `text-white/70` (panel body text)                                        |
+| Spacing          | `py-12 px-6 lg:px-12` (Left), `p-16` (Right), `gap-8` (card container), `gap-12` (product screenshot preview columns)|
+| Hover state      | `hover:bg-surface-secondary` (Google/GitHub CTAs), `group-hover:scale-102` (logo link)                            |
+| Shadow           | `shadow-sm` (Google/GitHub CTAs), `shadow-2xl` (Right side screenshot preview)                                    |
+| Accent usage     | `from-latte-lime to-latte-yellow` (gradients), `text-accent` (return link)                                         |
+
+**Pattern notes:**
+The login view is a clean split-panel design. The left white panel hosts the primary authorization card and absolute-positioned logo to provide a high-contrast backdrop for the dark-text `logo.png`. The right dark panel relies on glowing accent colors using the project's Catppuccin Latte custom colors (`from-latte-lime` to `to-latte-yellow`) and features the text and dynamic product mockups side-by-side. Spacing uses standard 8px grid intervals.
+
+
+#### Callback Page
+- **File Path**: [page.tsx](file:///home/ddroid/Projects/job-pilot/app/(auth)/callback/page.tsx)
+- **Container Classes**: `flex min-h-screen flex-col items-center justify-center bg-background px-4`
+- **Card Classes**: `w-full max-w-md bg-surface rounded-2xl p-8 shadow-[0px_1px_3px_1px_rgba(0,0,0,0.05),0px_1px_2px_0px_rgba(0,0,0,0.1)] border border-border text-center flex flex-col items-center gap-6`
+
+#### Navbar Dropdown Menu
+- **File Path**: [Navbar.tsx](file:///home/ddroid/Projects/job-pilot/components/layout/Navbar.tsx)
+- **Avatar Button**: `w-9 h-9 rounded-full bg-accent-light text-accent hover:bg-accent/20 flex items-center justify-center font-bold text-sm border border-accent/10 shadow-sm`
+- **Dropdown Container**: `absolute right-0 top-11 z-50 w-64 bg-surface border border-border rounded-xl shadow-lg p-2.5 flex flex-col gap-1.5`
+- **Sign Out Item**: `w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-error hover:bg-error/10 active:scale-98 transition-all duration-150`
+
+

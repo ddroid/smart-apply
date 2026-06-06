@@ -10,6 +10,8 @@
   --color-surface-secondary: #e6e9ef;  /* Catppuccin Latte Mantle */
   --color-surface-tertiary: #dce0e8;   /* Catppuccin Latte Crust */
   --color-surface-muted: #ccd0da;      /* Catppuccin Latte Surface 0 */
+  --color-latte-lime: #40a02b;         /* Catppuccin Latte Green as Lime */
+  --color-latte-yellow: #df8e1d;       /* Catppuccin Latte Yellow */
 
   /* Borders (Catppuccin Latte Surfaces) */
   --color-border: #ccd0da;             /* Catppuccin Latte Surface 0 */
