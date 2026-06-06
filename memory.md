@@ -1,35 +1,40 @@
-# Memory — Feature 03 PostHog Initialization & Event Flushing
+# Memory — Feature 04 Database Schema
 
-Last updated: 2026-06-07 00:43:00
+Last updated: 2026-06-07 01:15:00
 
 ## What was built
 
-- **PostHog Client-Side Setup**:
-  - Created [posthog-client.ts](file:///home/ddroid/Projects/job-pilot/lib/posthog-client.ts) to export browser-side PostHog initialization, ensuring it reads credentials correctly from `.env.local` variables (`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and `NEXT_PUBLIC_POSTHOG_HOST`).
-- **PostHog Server-Side Setup**:
-  - Updated [posthog-server.ts](file:///home/ddroid/Projects/job-pilot/lib/posthog-server.ts) to export `createPostHogServer` for non-cached client creation.
-  - Refactored [page.tsx](file:///home/ddroid/Projects/job-pilot/app/dashboard/page.tsx), [logout/route.ts](file:///home/ddroid/Projects/job-pilot/app/api/auth/logout/route.ts), and [set-tokens/route.ts](file:///home/ddroid/Projects/job-pilot/app/api/auth/set-tokens/route.ts) to instantiate PostHog using `createPostHogServer` and explicitly invoke `await posthog.shutdown()` in both success and error blocks to guarantee all events are flushed before the serverless execution environment yields.
+- **Database Schema**:
+  - Created [db/schema.sql](file:///home/ddroid/Projects/job-pilot/db/schema.sql) which defines the core tables: `profiles`, `agent_runs`, `jobs`, and `agent_logs`.
+  - Implemented Row Level Security (RLS) policies for all tables to ensure data isolation.
+  - Added a trigger `on_auth_user_created` to automatically create a profile in the `profiles` table when a new user signs up.
+  - Added a trigger `update_profiles_updated_at` to handle automatic timestamp updates for profiles.
+- **Storage Policies**:
+  - Created [db/storage_policies.sql](file:///home/ddroid/Projects/job-pilot/db/storage_policies.sql) to manage RLS for the `resumes` storage bucket, ensuring folder-level isolation based on `auth.uid()`.
 - **Progress Tracking Updated**:
-  - Marked Step 03 PostHog Initialization as completed in [progress-tracker.md](file:///home/ddroid/Projects/job-pilot/context/progress-tracker.md).
+  - Marked Step 04 Database Schema as completed in [progress-tracker.md](file:///home/ddroid/Projects/job-pilot/context/progress-tracker.md).
+  - Advanced the current status to Phase 2 — Profile Page.
 
 ## Decisions made
 
-- **PostHog Client Lifecycle**: Chose to use `createPostHogServer` rather than caching a single `PostHog` server client instance in `getPostHogClient()`. This allows us to safely call `await posthog.shutdown()` inside route handlers and server pages without rendering the client invalid for subsequent incoming requests.
+- **Profile Automation**: Decided to use a Postgres trigger (`on_auth_user_created`) on the `auth.users` table to ensure every registered user has a corresponding row in `public.profiles` immediately, simplifying frontend logic.
+- **Data Isolation**: Chose to enforce strict RLS policies where `auth.uid() = user_id` (or `id` for profiles) to guarantee that users can only access their own data.
+- **Storage Structure**: Adopted a folder-per-user structure (`bucket/user_id/file`) for resumes to allow granular RLS control in Supabase/InsForge storage.
 
 ## Problems solved
 
-- **Dropped Server Events**: Resolved a potential issue in serverless execution contexts where server-side event captures (like `dashboard_viewed`, `auth_logout_completed`, and `auth_tokens_set`) could get dropped before being sent over the network by adding `await posthog.shutdown()`.
-- **Compilation Failures**: Restored missing imports for `NextRequest`, `NextResponse`, and `setAuthCookies` in the token set route after refactoring imports.
+- **Initial Setup**: Established the foundational data model for the entire application, including the relationship between users, agent runs, jobs found, and detailed logs.
 
 ## Current state
 
-- Step 03 PostHog Initialization is complete.
-- Server-side event capturing works safely and robustly.
-- Code successfully builds via `npm run build` without any compilation errors.
+- Phase 1 Foundation is complete.
+- Database schema is fully defined and ready for deployment.
+- Storage policies are configured for secure resume handling.
+- Development is now moving into Phase 2: Profile Page.
 
 ## Next session starts with
 
-- **04 Database Schema**: Set up profiles, agent_runs, jobs, and agent_logs tables along with row-level security (RLS) policies and the resumes storage bucket as described in the Phase 1 build plan.
+- **05 Profile Page — Full UI**: Implement the comprehensive profile editor UI as defined in the Phase 2 build plan, allowing users to complete their candidate profiles.
 
 ## Open questions
 
