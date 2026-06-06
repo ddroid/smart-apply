@@ -1,19 +1,86 @@
 @import "tailwindcss";
 
-:root {
+@theme {
+  /* Font: Montserrat */
+  --font-sans: "Montserrat", sans-serif;
 
+  /* Page and surface backgrounds (Catppuccin Latte Base & Surfaces) */
+  --color-background: #eff1f5;         /* Catppuccin Latte Base */
+  --color-surface: #ffffff;            /* Elevated card containers in Material style */
+  --color-surface-secondary: #e6e9ef;  /* Catppuccin Latte Mantle */
+  --color-surface-tertiary: #dce0e8;   /* Catppuccin Latte Crust */
+  --color-surface-muted: #ccd0da;      /* Catppuccin Latte Surface 0 */
+
+  /* Borders (Catppuccin Latte Surfaces) */
+  --color-border: #ccd0da;             /* Catppuccin Latte Surface 0 */
+  --color-border-light: #bcc0cc;       /* Catppuccin Latte Surface 1 */
+  --color-border-muted: #acb0be;       /* Catppuccin Latte Surface 2 */
+
+  /* Text (Catppuccin Latte Neutrals) */
+  --color-text-primary: #4c4f69;       /* Catppuccin Latte Text */
+  --color-text-secondary: #5c5f77;     /* Catppuccin Latte Subtext 1 */
+  --color-text-muted: #6c6f85;         /* Catppuccin Latte Subtext 0 */
+  --color-text-dark: #36394a;          /* Custom darker overlay */
+  --color-text-darker: #272835;
+  --color-text-darkest: #1e1e2e;
+  --color-text-black: #11111b;
+  --color-text-slate: #272835;
+  --color-text-slate-medium: #666d80;
+
+  /* Primary Accent — Mauve (Catppuccin Latte Mauve) */
+  --color-accent: #8839ef;             /* Mauve */
+  --color-accent-dark: #722be2;        /* Darker Mauve for hover */
+  --color-accent-light: #f4eefc;       /* M3 light container background */
+  --color-accent-muted: #faf8ff;       /* Very subtle mauve tint */
+  --color-accent-foreground: #ffffff;  /* Contrast text on Mauve */
+
+  /* Success — Green & Teal (Catppuccin Latte) */
+  --color-success: #40a02b;            /* Green */
+  --color-success-alt: #179299;        /* Teal */
+  --color-success-dark: #307820;
+  --color-success-darker: #255c18;
+  --color-success-light: #e8f5e6;
+  --color-success-lightest: #f0fbf0;
+  --color-success-foreground: #40a02b;
+
+  /* Info — Blue & Sky (Catppuccin Latte) */
+  --color-info: #1e66f5;               /* Blue */
+  --color-info-dark: #04a5e5;          /* Sky */
+  --color-info-medium: #209fb5;        /* Sapphire */
+  --color-info-light: #e8f0fe;
+  --color-info-lightest: #f1f6ff;
+  --color-info-foreground: #1e66f5;
+  --color-info-muted: #8c8fa1;         /* Overlay 1 */
+
+  /* Warning — Peach & Yellow (Catppuccin Latte) */
+  --color-warning: #fe641b;            /* Peach */
+  --color-warning-foreground: #ffffff;
+
+  /* Error — Red (Catppuccin Latte) */
+  --color-error: #d20f39;              /* Red */
+  --color-error-foreground: #ffffff;
+
+  /* LinkedIn brand */
+  --color-linkedin: #0a66c2;
+  --color-linkedin-light: #dce6f1;
+  --color-linkedin-foreground: #ffffff;
+
+  /* Dark overlays */
+  --color-overlay: #111827;
+  --color-overlay-dark: #131316;
+
+  /* Border radius (Google Material Design 3 Spec) */
+  --radius-xs: 4px;                    /* Tiny elements, tiny indicators */
+  --radius-sm: 8px;                    /* Small shapes, inner layout components */
+  --radius-md: 12px;                   /* Text fields, standard inputs, small containers */
+  --radius-lg: 16px;                   /* Main Cards (M3 Large container shape) */
+  --radius-xl: 24px;                   /* Navigation drawer components, large panels, dialogs */
+  --radius-full: 9999px;               /* M3 capsule buttons, active nav indicators, badges */
 }
 
-@theme inline {
-
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-
-  }
-
-  body {
-
-  }
+/* Base styles using design tokens */
+html, body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
 }
