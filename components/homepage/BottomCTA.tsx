@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import posthog from "posthog-js";
 
 export function BottomCTA() {
   return (
@@ -24,6 +25,7 @@ export function BottomCTA() {
         <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto justify-center">
           <Link
             href="/login"
+            onClick={() => posthog.capture("cta_clicked", { location: "bottom_cta", cta: "get_started" })}
             className="px-6 py-3 rounded-full text-sm font-medium bg-overlay hover:bg-overlay-dark text-white flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-98"
           >
             Get Started
@@ -37,6 +39,7 @@ export function BottomCTA() {
           </Link>
           <Link
             href="/login"
+            onClick={() => posthog.capture("cta_clicked", { location: "bottom_cta", cta: "find_first_match" })}
             className="px-6 py-3 rounded-full text-sm font-medium border border-border-light hover:bg-accent-light text-accent transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 active:scale-98 bg-surface"
           >
             Find Your First Match

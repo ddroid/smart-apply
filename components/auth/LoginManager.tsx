@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { insforge } from "@/lib/insforge-client";
+import posthog from "posthog-js";
 
 export function LoginManager() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export function LoginManager() {
   }, [router]);
 
   const handleOAuthLogin = async (provider: "google" | "github") => {
+    posthog.capture("login_started", { provider });
     try {
       setLoadingProvider(provider);
       setErrorMessage(null);
@@ -50,6 +52,11 @@ export function LoginManager() {
       if (data?.url) window.location.assign(data.url);
     } catch (err: any) {
       console.error(`[login/${provider}]`, err);
+      posthog.capture("login_oauth_failed", {
+        provider,
+        error_message: err.message,
+      });
+      posthog.captureException(err);
       setErrorMessage(err.message || `Failed to sign in with ${provider}.`);
       setLoadingProvider(null);
     }

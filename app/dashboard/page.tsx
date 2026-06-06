@@ -2,6 +2,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { createInsforgeServer } from "@/lib/insforge-server";
 import { redirect } from "next/navigation";
+import { createPostHogServer } from "@/lib/posthog-server";
 
 export default async function DashboardPage() {
   const insforge = await createInsforgeServer();
@@ -10,6 +11,15 @@ export default async function DashboardPage() {
   if (!user) {
     redirect("/login");
   }
+
+  const posthog = createPostHogServer();
+  posthog.capture({
+    distinctId: user.id,
+    event: "dashboard_viewed",
+    properties: { email: user.email },
+  });
+  await posthog.shutdown();
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-text-primary">

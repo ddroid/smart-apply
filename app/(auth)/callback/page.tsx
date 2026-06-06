@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { insforge } from "@/lib/insforge-client";
+import posthog from "posthog-js";
 
 export default function CallbackPage() {
   const router = useRouter();
@@ -25,6 +26,11 @@ export default function CallbackPage() {
         }
 
         if (data?.user) {
+          // Identify user in PostHog now that we have their identity
+          posthog.identify(data.user.id, {
+            email: data.user.email,
+          });
+
           // Extract the active tokens from the SDK client
           const httpClient = insforge.getHttpClient();
           const accessToken = (httpClient as any).userToken;
@@ -35,22 +41,35 @@ export default function CallbackPage() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "X-POSTHOG-DISTINCT-ID": data.user.id,
+              "X-POSTHOG-SESSION-ID": posthog.get_session_id() ?? "",
             },
-            body: JSON.stringify({ accessToken, refreshToken }),
+            body: JSON.stringify({ accessToken, refreshToken, userId: data.user.id }),
           });
 
           if (!cookieRes.ok) {
             throw new Error("Failed to persist session cookies on server.");
           }
 
+          posthog.capture("login_completed", {
+            user_id: data.user.id,
+            email: data.user.email,
+          });
+
           router.push("/dashboard");
         } else {
+          posthog.capture("login_failed", { reason: "no_session" });
           setError("No user session found. Please try logging in again.");
           setTimeout(() => router.push("/login?error=no_session"), 3000);
         }
       } catch (err) {
         if (!active) return;
         console.error("[auth/callback]", err);
+        posthog.capture("login_failed", {
+          reason: "unexpected_error",
+          error_message: err instanceof Error ? err.message : String(err),
+        });
+        posthog.captureException(err);
         setError("An unexpected error occurred during redirect processing.");
         setTimeout(() => router.push("/login?error=unexpected"), 3000);
       }

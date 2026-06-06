@@ -1,42 +1,35 @@
-# Memory — Feature 02 Auth Customization & Consolidation
+# Memory — Feature 03 PostHog Initialization & Event Flushing
 
-Last updated: 2026-06-07 00:13:00
+Last updated: 2026-06-07 00:43:00
 
 ## What was built
 
-- **Auth Screen Layout Consolidation**:
-  - Overhauled and simplified [LoginManager.tsx](file:///home/ddroid/Projects/job-pilot/components/auth/LoginManager.tsx) to establish the finalized visual split-panel layout (previously Variant 3) as the official authentication page.
-  - Swapped panel alignment: placed the white login form card panel on the left (providing high contrast for the dark-text `logo.png` logo) and the dark-themed briefing panel on the right.
-  - Positioned the scaled logo (`159px` by `54px`) at the top-left of the left white panel to remain in the same screen position.
-  - Included a product preview mockup side-by-side with the reverted-size typography block (`text-4xl` heading and `text-sm text-white/70` body text) using the public asset [/images/jobs-lists.png](file:///home/ddroid/Projects/job-pilot/public/images/jobs-lists.png).
-  - Deleted the variant switcher pill and clean-up of the other 4 temporary variants.
-- **Cleaned Up Obsolete Routes**:
-  - Modified [app/(auth)/login/page.tsx](file:///home/ddroid/Projects/job-pilot/app/(auth)/login/page.tsx) to render `<LoginManager />` without variants.
-  - Deleted the development dynamic login sub-routes folder `app/(auth)/login/[id]`.
-  - Deleted the root-level dynamic route redirect handler folder `app/[id]`.
-- **Custom Theme Accent Configurations**:
-  - Configured custom variables inside the `@theme` block of [app/globals.css](file:///home/ddroid/Projects/job-pilot/app/globals.css):
-    - `--color-latte-lime: #40a02b;`
-    - `--color-latte-yellow: #df8e1d;`
+- **PostHog Client-Side Setup**:
+  - Created [posthog-client.ts](file:///home/ddroid/Projects/job-pilot/lib/posthog-client.ts) to export browser-side PostHog initialization, ensuring it reads credentials correctly from `.env.local` variables (`NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` and `NEXT_PUBLIC_POSTHOG_HOST`).
+- **PostHog Server-Side Setup**:
+  - Updated [posthog-server.ts](file:///home/ddroid/Projects/job-pilot/lib/posthog-server.ts) to export `createPostHogServer` for non-cached client creation.
+  - Refactored [page.tsx](file:///home/ddroid/Projects/job-pilot/app/dashboard/page.tsx), [logout/route.ts](file:///home/ddroid/Projects/job-pilot/app/api/auth/logout/route.ts), and [set-tokens/route.ts](file:///home/ddroid/Projects/job-pilot/app/api/auth/set-tokens/route.ts) to instantiate PostHog using `createPostHogServer` and explicitly invoke `await posthog.shutdown()` in both success and error blocks to guarantee all events are flushed before the serverless execution environment yields.
+- **Progress Tracking Updated**:
+  - Marked Step 03 PostHog Initialization as completed in [progress-tracker.md](file:///home/ddroid/Projects/job-pilot/context/progress-tracker.md).
 
 ## Decisions made
 
-- **Z-Indexing Layers**: Removed negative z-indexing from the fluid backgrounds (`-z-20` caused them to render behind the parent's background color `bg-[#0f111a]`). Assigned `relative z-10` to content blocks and left the absolute-positioned blobs at standard `z-0` rendering to keep them visible and layered behind text and mockups correctly.
-- **Root-level Redirect Cleanup**: Removed `/login/1` to `/login/5` short links routing at the root `app/[id]` route, standardizing the application entry point to `/login`.
+- **PostHog Client Lifecycle**: Chose to use `createPostHogServer` rather than caching a single `PostHog` server client instance in `getPostHogClient()`. This allows us to safely call `await posthog.shutdown()` inside route handlers and server pages without rendering the client invalid for subsequent incoming requests.
 
 ## Problems solved
 
-- **Logo Readability**: Solved low contrast issues for the dark text in the logo image by moving the white-background container to the left panel (so it serves as the backdrop).
-- **Invisible Gradient Blobs**: Solved disappeared background gradient overlays by adjusting standard z-index stacking layers relative to the container’s solid color.
+- **Dropped Server Events**: Resolved a potential issue in serverless execution contexts where server-side event captures (like `dashboard_viewed`, `auth_logout_completed`, and `auth_tokens_set`) could get dropped before being sent over the network by adding `await posthog.shutdown()`.
+- **Compilation Failures**: Restored missing imports for `NextRequest`, `NextResponse`, and `setAuthCookies` in the token set route after refactoring imports.
 
 ## Current state
 
-- The authentication screen is completed, styled with the Catppuccin Latte Lime & Yellow palette, and verified cleanly with type compilation (`npx tsc --noEmit` returns no warnings/errors).
-- OAuth providers (Google/GitHub) are working correctly and persist session tokens in local cookies.
+- Step 03 PostHog Initialization is complete.
+- Server-side event capturing works safely and robustly.
+- Code successfully builds via `npm run build` without any compilation errors.
 
 ## Next session starts with
 
-- **03 PostHog Initialization**: Set up the PostHog provider in the root application layout and create client-side (`lib/posthog-client.ts`) and server-side (`lib/posthog-server.ts`) analytics capturers as detailed in Phase 1 of the build plan.
+- **04 Database Schema**: Set up profiles, agent_runs, jobs, and agent_logs tables along with row-level security (RLS) policies and the resumes storage bucket as described in the Phase 1 build plan.
 
 ## Open questions
 

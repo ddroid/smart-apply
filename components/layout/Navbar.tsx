@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { insforge } from "@/lib/insforge-client";
+import posthog from "posthog-js";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -31,18 +32,25 @@ export function Navbar() {
   }, [pathname]);
 
   const handleSignOut = async () => {
+    posthog.capture("sign_out");
     try {
       // Terminate backend session
       await insforge.auth.signOut();
-      
-      // Clear local server cookies
-      await fetch("/api/auth/logout", { method: "POST" });
 
+      // Clear local server cookies
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id }),
+      });
+
+      posthog.reset();
       setUser(null);
       router.push("/");
       router.refresh();
     } catch (err) {
       console.error("[navbar/sign-out]", err);
+      posthog.captureException(err);
     }
   };
 
