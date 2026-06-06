@@ -1,9 +1,21 @@
-import React from 'react'
+import { Navbar } from "@/components/layout/Navbar";
+import { Hero } from "@/components/homepage/Hero";
+import { Features } from "@/components/homepage/Features";
+import { Testimonial } from "@/components/homepage/Testimonial";
+import { BottomCTA } from "@/components/homepage/BottomCTA";
+import { Footer } from "@/components/layout/Footer";
 
-const app = () => {
+export default function Home() {
   return (
-    <h1 className='bg-info text-accent-light text-3xl'>app</h1>
-  )
+    <div className="flex flex-col min-h-screen bg-background">
+      <Navbar />
+      <main className="flex-1 flex flex-col w-full">
+        <Hero />
+        <Features />
+        <Testimonial />
+        <BottomCTA />
+      </main>
+      <Footer />
+    </div>
+  );
 }
-
-export default app
