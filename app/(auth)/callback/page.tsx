@@ -56,7 +56,9 @@ export default function CallbackPage() {
             email: data.user.email,
           });
 
-          router.push("/dashboard");
+          const params = new URLSearchParams(window.location.search);
+          const next = params.get("next") || "/dashboard";
+          router.push(next);
         } else {
           posthog.capture("login_failed", { reason: "no_session" });
           setError("No user session found. Please try logging in again.");

@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 5 — Dashboard
-**Last completed:** 16 Recent Activity — Real Data
-**Next:** 17 Analytics Charts — PostHog Data
+**Last completed:** 17 Analytics Charts — PostHog Data
+**Next:** Phase 5 Complete / TBD
 
 ---
 
@@ -44,7 +44,7 @@ Update this file after every completed feature. Any AI agent reading this should
 - [x] 14 Dashboard Page — Full UI
 - [x] 15 Stats Bar — Real Data
 - [x] 16 Recent Activity — Real Data
-- [ ] 17 Analytics Charts — PostHog Data
+- [x] 17 Analytics Charts — PostHog Data
 
 ---
 
@@ -55,6 +55,7 @@ _Add decisions here as they are made during implementation._
 - **Concurrent Server Fetching:** Opted to use `Promise.all` directly inside Next.js Server Components for multiple small aggregations instead of defining custom SQL RPCs to maintain speed without altering the database schema.
 - **Chart Naming Alignment:** Overrode the UI mockup title "Resume Tailoring Activity" with "Company Research Activity" to accurately mirror our underlying event analytics schema in PostHog.
 - **Strict PostHog Compliance:** Deliberately deleted standard page-view tracking (`dashboard_viewed`) to adhere to our rigid `code-standards.md` policy capping the project at only 4 registered events.
+- **Analytics Data Fetching Pivot:** Pivoted away from fetching analytics directly from PostHog via the Query API, and instead built `lib/db-analytics.ts` to aggregate events locally from the `jobs` database table. This eliminates the need for users to provision PostHog Personal API Keys, increases speed, and handles empty states flawlessly.
 
 ---
 
@@ -78,3 +79,4 @@ _Add decisions here as they are made during implementation._
 - **15 Stats Bar — Real Data:** Upgraded `StatsBar.tsx` into a Server Component. Wired it to the `insforge.database` using 4 concurrent queries (with `count: "exact", head: true` for pure zero-payload counts) to render live statistics.
 - **16 Recent Activity — Real Data:** Upgraded `RecentActivity.tsx` to fetch the top 10 rows from both `agent_runs` and `jobs` (where `company_research` is present). Merged, formatted, and sorted the results in-memory into a unified timeline capped at the top 5 recent events.
 - **SDK Drift:** Handled `insforge.auth.getUser()` and `insforge.from()` crashing by updating method calls to match the project's exact installed `@insforge/sdk` version (`insforge.auth.getCurrentUser()` and `insforge.database.from()`).
+- **17 Analytics Charts — DB Data (Pivot):** Swapped out PostHog queries for native InsForge database aggregations in `lib/db-analytics.ts` after determining it provides a simpler, keyless experience for the user. `app/dashboard/page.tsx` now calls `Promise.all` directly against the database to calculate historical counts (Jobs Found, Company Research) and Match Score buckets in-memory before streaming them down to the modified `AnalyticsCharts.tsx` Client Components.

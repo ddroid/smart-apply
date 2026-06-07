@@ -221,7 +221,7 @@ export function JobList({ jobs }: JobListProps) {
                   <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider border-b border-border pb-3">Match Score</h3>
                   <div className="flex flex-col gap-3.5 text-sm">
                     <span className="text-text-secondary">Minimum: {minScore}%</span>
-                    <input type="range" min="0" max="100" value={minScore} onChange={e => setMinScore(Number(e.target.value))} className="w-full accent-text-primary" />
+                    <input type="range" min="0" max="100" value={minScore} onChange={e => setMinScore(Number(e.target.value))} className="w-full accent-text-primary ph-no-capture" data-rr-ignore="true" />
                   </div>
                 </div>
 

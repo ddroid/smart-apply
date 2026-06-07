@@ -14,6 +14,7 @@ export function Footer() {
               width={20}
               height={20}
               className="object-contain invert brightness-200"
+              style={{ width: "auto" }}
             />
           </div>
           <span className="text-base font-bold text-text-primary tracking-tight">

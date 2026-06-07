@@ -21,7 +21,15 @@ export function LoginManager() {
         const { data } = await insforge.auth.getCurrentUser();
         if (active) {
           if (data?.user) {
-            router.push("/dashboard");
+            const params = new URLSearchParams(window.location.search);
+            const redirectTo = params.get("redirectTo");
+            if (redirectTo) {
+              // Mismatch: client has local session, but server redirected to login (missing cookies)
+              await insforge.auth.signOut();
+              setCheckingAuth(false);
+            } else {
+              router.push("/dashboard");
+            }
           } else {
             setCheckingAuth(false);
           }
@@ -44,9 +52,13 @@ export function LoginManager() {
     try {
       setLoadingProvider(provider);
       setErrorMessage(null);
-      const callbackUrl = `${window.location.origin}/callback`;
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirectTo");
+      const callbackUrl = new URL("/callback", window.location.origin);
+      if (redirectTo) callbackUrl.searchParams.set("next", redirectTo);
+
       const { data, error } = await insforge.auth.signInWithOAuth(provider, {
-        redirectTo: callbackUrl,
+        redirectTo: callbackUrl.toString(),
       });
       if (error) throw new Error(error.message);
       if (data?.url) window.location.assign(data.url);
@@ -149,6 +161,7 @@ export function LoginManager() {
               width={159}
               height={54}
               priority
+              style={{ width: "auto" }}
               className="object-contain transition-transform duration-150 group-hover:scale-102"
             />
           </Link>

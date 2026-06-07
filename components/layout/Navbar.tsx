@@ -70,6 +70,7 @@ export function Navbar() {
           width={106}
           height={36}
           priority
+          style={{ width: "auto" }}
           className="object-contain transition-transform duration-150 group-hover:scale-102"
         />
       </Link>

@@ -29,14 +29,22 @@ export async function proxy(request: NextRequest) {
 
   if (isProtectedRoute && !hasAccessToken) {
     const loginUrl = new URL("/login", request.url);
-    // Keep track of the original page to redirect back after login
     loginUrl.searchParams.set("redirectTo", path);
-    return NextResponse.redirect(loginUrl);
+    const redirectResponse = NextResponse.redirect(loginUrl);
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return redirectResponse;
   }
 
   // Redirect authenticated users away from login page to dashboard
   if (path === "/login" && hasAccessToken) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const dashboardUrl = new URL("/dashboard", request.url);
+    const redirectResponse = NextResponse.redirect(dashboardUrl);
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    return redirectResponse;
   }
 
   return response;
@@ -46,11 +54,10 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico, logo.png, images/ (public assets)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|logo.png|images/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|logo.png|images/).*)",
   ],
 };
