@@ -3,7 +3,7 @@
 This registry tracks the structural and visual patterns extracted from components. Use these exact configurations when building similar elements to ensure consistency across the application.
 
 ### Elevated Card Panel
-File: `components/profile/ProfileInformationForm.tsx`, `components/profile/ResumeSection.tsx`, `components/profile/ProfileAlert.tsx`
+File: `components/profile/ProfileInformationForm.tsx`, `components/profile/ResumeSection.tsx`, `components/profile/ProfileAlert.tsx`, `components/job-details/*`
 Last updated: 2026-06-07
 
 | Property         | Class           |
@@ -11,20 +11,21 @@ Last updated: 2026-06-07
 | Background       | `bg-surface`    |
 | Border           | `border border-border` (Alert uses `border-error/20` when representing an alert, others don't have explicit border if shadow is present) |
 | Border radius    | `rounded-2xl`   |
-| Spacing          | `p-6`           |
+| Spacing          | `p-6` or `p-8`  |
 | Shadow           | `shadow-[0px_1px_3px_1px_rgba(0,0,0,0.05),0px_1px_2px_0px_rgba(0,0,0,0.1)]` |
 
 **Pattern notes:**
 This is the primary M3 elevated container style. All major content blocks on a page should sit inside this exact configuration.
 
 ### Section Heading
-File: `components/profile/ResumeSection.tsx`
+File: `components/profile/ResumeSection.tsx`, `components/job-details/*`
 Last updated: 2026-06-07
 
 | Property         | Class           |
 | ---------------- | --------------- |
 | Text size/weight | `text-base font-bold` |
 | Text color       | `text-text-primary` |
+| Icon Wrapper     | `w-8 h-8 rounded-full flex items-center justify-center shrink-0` |
 
 ### Form Labels
 File: `components/profile/ProfileInformationForm.tsx`
@@ -71,7 +72,7 @@ Last updated: 2026-06-07
 | Property         | Class           |
 | ---------------- | --------------- |
 | Background       | `bg-accent`     |
-| Text color       | `text-accent-foreground` |
+| Text color       | `text-accent-foreground` or `text-white` |
 | Border radius    | `rounded-xl` (Note: Full width actions can use `rounded-xl` over `rounded-full` to align with input styling) |
 | Spacing          | `px-6 py-3.5 w-full` |
 | Text size/weight | `text-base font-bold` |
@@ -138,3 +139,75 @@ Last updated: 2026-06-07
 
 **Pattern notes:**
 Small linear progress indicator used inside data tables. Colors adapt based on score threshold (>=90: success, >=80: info, >=70: warning, <70: error).
+
+### Filter Modal (Overlay)
+File: `components/find-jobs/JobList.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Backdrop         | `bg-overlay/60` |
+| Container Bg     | `bg-surface`    |
+| Border           | `border border-border` |
+| Radius           | `rounded-xl`    |
+| Shadow           | `shadow-2xl`    |
+
+### Filter Pill (Toggleable)
+File: `components/find-jobs/JobList.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Active Bg/Text   | `bg-text-primary text-surface` |
+| Inactive Bg/Text | `bg-surface-secondary/40 text-text-secondary hover:bg-surface-secondary/80` |
+| Radius           | `rounded-lg`    |
+| Padding          | `px-4 py-1.5`   |
+| Font             | `text-sm font-medium transition-colors` |
+
+### Mini Info Cards (Data Grid)
+File: `components/job-details/JobInfo.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Background       | `bg-surface`    |
+| Border           | `border border-border` |
+| Border radius    | `rounded-2xl`   |
+| Spacing          | `p-6`           |
+| Icon Wrapper     | `w-10 h-10 rounded-full flex items-center justify-center shrink-0` |
+| Icon Wrapper Bg  | Use semantic light variants (e.g., `bg-success-light`, `bg-info-light`, `bg-accent-light`) |
+| Data Label Text  | `text-[11px] font-bold text-text-muted uppercase tracking-wider` |
+
+**Pattern notes:**
+Used for displaying distinct key-value metrics (like Salary, Location, Type) in a grid layout.
+
+### Status Chips (Matched/Missing Skills)
+File: `components/job-details/MatchScore.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Matched Bg/Text  | `bg-success-light text-success border-success/10` |
+| Missing Bg/Text  | `bg-accent-light text-accent border-accent/10` |
+| Border           | `border`        |
+| Border radius    | `rounded-full`  |
+| Spacing          | `px-3 py-1.5 gap-1.5` |
+| Font             | `text-xs font-medium` |
+
+**Pattern notes:**
+Static visual chips to distinguish positive (matched) and negative/gap (missing) items. They differ from Removable Badges by using borders and specific semantic colors.
+
+### Informational Banner Box
+File: `components/job-details/JobDescription.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Background       | `bg-surface-secondary/40` |
+| Border           | `border border-border-light` |
+| Border radius    | `rounded-xl`    |
+| Spacing          | `p-5`           |
+| Text styling     | `text-sm text-text-secondary leading-relaxed` |
+
+**Pattern notes:**
+A neutral, embedded alert block placed inline with content to convey secondary information or warnings (like truncation notices) without interrupting the visual hierarchy.

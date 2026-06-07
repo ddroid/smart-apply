@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Phase 3 — Find Jobs Page
-**Last completed:** 09 Find Jobs Page — Full UI
-**Next:** 10 Adzuna Job Discovery
+**Phase:** Phase 5 — Dashboard
+**Last completed:** 13 Company Research Agent
+**Next:** 14 Dashboard Page — Full UI
 
 ---
 
@@ -31,13 +31,13 @@ Update this file after every completed feature. Any AI agent reading this should
 ### Phase 3 — Find Jobs Page
 
 - [x] 09 Find Jobs Page — Full UI
-- [ ] 10 Adzuna Job Discovery
-- [ ] 11 Filter + Sort + Pagination
+- [x] 10 Adzuna Job Discovery
+- [x] 11 Filter + Sort + Pagination
 
 ### Phase 4 — Job Details Page
 
-- [ ] 12 Job Details Page — Full UI
-- [ ] 13 Company Research Agent
+- [x] 12 Job Details Page — Full UI
+- [x] 13 Company Research Agent
 
 ### Phase 5 — Dashboard
 
@@ -68,3 +68,5 @@ _Add decisions here as they are made during implementation._
 - **07 AI Profile Extraction from Resume:** Created `POST /api/resume/extract` using `pdf-parse`, `ai` SDK, and `@ai-sdk/openai` configured for Groq's `openai/gpt-oss-120b` model to extract structured data from uploaded resumes. Updated `ResumeSection.tsx` to handle direct file uploads to InsForge Storage and trigger the extraction API. Modified `ProfileClient.tsx` to utilize React keys to force remount `ProfileInformationForm` with the newly extracted initial data without requiring complex state management for uncontrolled inputs.
 - **08 Resume PDF Generation from Profile:** Created `POST /api/resume/generate` endpoint forcing Node.js runtime to support `@react-pdf/renderer`. It takes raw profile data, prompts Groq LLM for a polished JSON with a professional summary and tightened bullet points, then maps that JSON to a single-page PDF `<Document>` template. The buffer is saved dynamically to the InsForge `resumes` bucket, bypassing CDN caching, and the profile is updated with the new `resume_pdf_url`. Connected the "Generate PDF" button in `ResumeSection.tsx` to call the endpoint and handle loading/success states.
 - **09 Find Jobs Page — Full UI:** Built the pixel-perfect `FindJobsPage` UI matching the provided design exactly, including a dedicated `SearchControls` card with an embedded green success banner, and a rich `JobList` table featuring a filter bar, robust mock data, match score progress bars using correct token colors, and pagination controls.
+- **12 Job Details Page — Full UI:** Completed UI for the dynamic `[id]` page including server-side data fetching and components for `JobInfo`, `MatchScore`, `JobDescription`, and `CompanyResearch` (empty state).
+- **13 Company Research Agent:** Implemented a Next.js server-side API endpoint that uses `@browserbasehq/stagehand` to visit up to 3 company subpages based on the Adzuna `redirect_url` derivation. Synthesized the research via Groq (`openai/gpt-oss-120b`) using the OpenAI SDK, securely saved the full 9-property structured JSON dossier to the InsForge database, captured a PostHog event, and fully rendered the `CompanyResearch.tsx` component with real-time UI state.

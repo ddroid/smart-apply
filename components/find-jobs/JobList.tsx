@@ -3,12 +3,14 @@
 import { Search, ChevronDown, Building2, Filter, X } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { JobType } from "./FindJobsClient";
+import { useRouter } from "next/navigation";
 
 type JobListProps = {
   jobs: JobType[];
 };
 
 export function JobList({ jobs }: JobListProps) {
+  const router = useRouter();
   const [searchedFilter, setSearchedFilter] = useState("all"); 
   const [uploadedFilter, setUploadedFilter] = useState("all");
   const [minScore, setMinScore] = useState(0);
@@ -173,7 +175,7 @@ export function JobList({ jobs }: JobListProps) {
 
       {/* YouTube-style Filters Modal */}
       {showFilters && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setShowFilters(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay/60 p-4" onClick={() => setShowFilters(false)}>
           <div className="bg-surface border border-border rounded-xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b border-border">
               <h2 className="text-xl font-medium text-text-primary">Search filters</h2>
@@ -299,7 +301,18 @@ export function JobList({ jobs }: JobListProps) {
               </tr>
             ) : (
               paginatedJobs.map((job) => (
-                <tr key={job.id} className="border-b border-border-light hover:bg-surface-secondary/40 transition-colors last:border-b-0">
+                <tr 
+                  key={job.id} 
+                  onClick={() => router.push(`/find-jobs/${job.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(`/find-jobs/${job.id}`);
+                    }
+                  }}
+                  tabIndex={0}
+                  className="border-b border-border-light hover:bg-surface-secondary/40 transition-colors last:border-b-0 cursor-pointer focus:outline-none focus:bg-surface-secondary/60"
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center flex-shrink-0 border border-border">
