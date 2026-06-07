@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS public.jobs (
   matched_skills text[] DEFAULT '{}',
   missing_skills text[] DEFAULT '{}',
   company_research jsonb DEFAULT NULL,
+  posted_at timestamptz,
   found_at timestamptz NOT NULL DEFAULT now()
 );
 

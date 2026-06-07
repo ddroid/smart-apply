@@ -105,3 +105,36 @@ Last updated: 2026-06-07
 | Hover state      | `hover:bg-surface-secondary/50 cursor-pointer` |
 | Drag active state| `border-accent bg-accent/5` |
 | Disabled state   | `border-accent/50 opacity-70 bg-surface-secondary/30` |
+
+### Success Banner (Inline Alert)
+File: `components/find-jobs/SearchControls.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Background       | `bg-success-lightest` |
+| Border           | `border border-success-light` |
+| Border radius    | `rounded-xl`    |
+| Spacing          | `px-4 py-3 flex items-center gap-2` |
+| Text size/weight | `text-sm font-medium` |
+| Text color       | `text-success-dark` |
+| Icon color       | `text-success`  |
+
+**Pattern notes:**
+Used for inline success messages within cards, distinctly different from the high-contrast `ProfileAlert` component. Provides subtle feedback.
+
+### Match Score Progress Bar
+File: `components/find-jobs/JobList.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Track Background | `bg-surface-muted` |
+| Fill Background  | `bg-success`, `bg-info`, or `bg-warning` (Based on score range) |
+| Border radius    | `rounded-full`  |
+| Height           | `h-1.5`         |
+| Container Width  | `w-16`          |
+| Text styling     | `text-sm font-bold text-text-primary` |
+
+**Pattern notes:**
+Small linear progress indicator used inside data tables. Colors adapt based on score threshold (>=90: success, >=80: info, >=70: warning, <70: error).
