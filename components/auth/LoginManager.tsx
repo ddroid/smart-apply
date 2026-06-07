@@ -220,6 +220,7 @@ export function LoginManager() {
               src="/images/jobs-lists.png"
               alt="Jobs List Preview"
               fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               priority
             />

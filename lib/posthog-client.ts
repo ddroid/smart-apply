@@ -5,7 +5,6 @@ if (typeof window !== "undefined" && !posthog.__loaded) {
     api_host: "/ingest",
     ui_host: "https://us.posthog.com",
     capture_exceptions: true,
-    debug: process.env.NODE_ENV === "development",
   });
 }
 
