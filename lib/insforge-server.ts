@@ -11,6 +11,20 @@ export const createInsforgeServer = async () => {
         const cookie = cookieStore.get(name);
         return cookie ? cookie.value : undefined;
       },
+      set: (name, value, options) => {
+        try {
+          cookieStore.set({ name, value, ...options });
+        } catch (error) {
+          // Handle error gracefully if called from Server Component
+        }
+      },
+      remove: (name, options) => {
+        try {
+          cookieStore.set({ name, value: '', ...options });
+        } catch (error) {
+          // Handle error gracefully if called from Server Component
+        }
+      },
     },
   });
 };

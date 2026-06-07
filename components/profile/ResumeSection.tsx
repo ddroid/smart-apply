@@ -1,22 +1,25 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { CloudUpload, FileText, Loader2, Sparkles, CheckCircle2 } from "lucide-react";
+import { CloudUpload, FileText, Loader2, Sparkles, CheckCircle2, Download } from "lucide-react";
 import { insforge } from "@/lib/insforge-client";
 import { saveResumeUrl } from "@/actions/profile";
 
 interface ResumeSectionProps {
   hasResume: boolean;
+  resumeUrl?: string | null;
   onUploadSuccess: (url: string) => void;
   onExtractSuccess: (data: any) => void;
 }
 
-export function ResumeSection({ hasResume, onUploadSuccess, onExtractSuccess }: ResumeSectionProps) {
+export function ResumeSection({ hasResume, resumeUrl, onUploadSuccess, onExtractSuccess }: ResumeSectionProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [extractError, setExtractError] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   
 
@@ -43,6 +46,15 @@ export function ResumeSection({ hasResume, onUploadSuccess, onExtractSuccess }: 
 
       const filePath = `${user.id}/resume-${Date.now()}-${Math.random().toString(36).substring(2, 9)}.pdf`;
       
+      // Delete old file if exists
+      if (resumeUrl) {
+        const urlParts = resumeUrl.split('/resumes/objects/');
+        if (urlParts.length >= 2) {
+          const oldFilePath = decodeURIComponent(urlParts[1]);
+          await insforge.storage.from("resumes").remove(oldFilePath as any);
+        }
+      }
+
       const { error: uploadErr } = await insforge.storage
         .from("resumes")
         .upload(filePath, file);
@@ -96,6 +108,54 @@ export function ResumeSection({ hasResume, onUploadSuccess, onExtractSuccess }: 
     if (file) processFile(file);
   };
 
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!resumeUrl) return;
+
+    try {
+      const urlParts = resumeUrl.split('/resumes/objects/');
+      if (urlParts.length < 2) throw new Error("Invalid resume URL format");
+      
+      const filePath = decodeURIComponent(urlParts[1]);
+      
+      const { data, error } = await insforge.storage.from("resumes").download(filePath);
+      if (error || !data) throw error || new Error("Failed to download");
+
+      const blobUrl = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = 'resume.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error: any) {
+      console.error("Download failed:", error);
+      // Fallback: try opening it anyway
+      window.open(resumeUrl, '_blank');
+    }
+  };
+
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    setGenerateError("");
+
+    try {
+      const res = await fetch("/api/resume/generate", { method: "POST" });
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw new Error(json.error || "Failed to generate resume.");
+      }
+
+      onUploadSuccess(json.resume_pdf_url);
+    } catch (err: any) {
+      setGenerateError(err.message || "Failed to generate resume.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleExtract = async () => {
     setIsExtracting(true);
     setExtractError("");
@@ -132,6 +192,12 @@ export function ResumeSection({ hasResume, onUploadSuccess, onExtractSuccess }: 
       {extractError && (
         <div className="mb-4 p-3 rounded-xl bg-error/10 border border-error/20 text-error text-sm font-medium">
           {extractError}
+        </div>
+      )}
+
+      {generateError && (
+        <div className="mb-4 p-3 rounded-xl bg-error/10 border border-error/20 text-error text-sm font-medium">
+          {generateError}
         </div>
       )}
 
@@ -209,10 +275,28 @@ export function ResumeSection({ hasResume, onUploadSuccess, onExtractSuccess }: 
         <p className="text-sm text-text-secondary">
           Need a fresh document based on the fields below?
         </p>
-        <button className="bg-surface-secondary text-text-primary border border-border rounded-full px-6 py-2.5 text-sm font-medium hover:bg-border-light transition-colors flex items-center gap-2">
-          <FileText className="w-4 h-4 text-text-muted" />
-          Generate PDF
-        </button>
+        <div className="flex gap-2">
+          {resumeUrl && (
+            <button 
+              onClick={handleDownload}
+              className="bg-black text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-800 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+          )}
+          <button 
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            className="bg-surface-secondary text-text-primary border border-border rounded-full px-6 py-2.5 text-sm font-medium hover:bg-border-light transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGenerating ? (
+              <Loader2 className="w-4 h-4 text-text-muted animate-spin" />
+            ) : (
+              <FileText className="w-4 h-4 text-text-muted" />
+            )}
+            {isGenerating ? "Generating..." : "Generate PDF"}
+          </button>
+        </div>
       </div>
     </div>
   );

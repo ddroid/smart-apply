@@ -24,6 +24,7 @@ export function ProfileClient({ initialProfile }: { initialProfile: any }) {
     <>
       <ResumeSection 
         hasResume={!!profileData.resume_pdf_url} 
+        resumeUrl={profileData.resume_pdf_url}
         onUploadSuccess={handleResumeUploaded}
         onExtractSuccess={handleExtractionSuccess}
       />

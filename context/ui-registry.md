@@ -77,6 +77,21 @@ Last updated: 2026-06-07
 | Text size/weight | `text-base font-bold` |
 | Hover state      | `hover:bg-accent-dark` |
 
+### Icon-Only Action Button (Alternative)
+File: `components/profile/ResumeSection.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Background       | `bg-black`      |
+| Text color       | `text-white`    |
+| Border radius    | `rounded-full`  |
+| Spacing          | `w-10 h-10 flex items-center justify-center` |
+| Hover state      | `hover:bg-gray-800 transition-colors` |
+
+**Pattern notes:**
+Used for quick utility actions next to primary or secondary buttons, providing high contrast without competing with standard form buttons.
+
 ### Dotted / Dashed Upload Area
 File: `components/profile/ResumeSection.tsx`
 Last updated: 2026-06-07
