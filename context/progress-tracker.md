@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 2 — Profile Page
-**Last completed:** 04 Database Schema
-**Next:** 05 Profile Page — Full UI
+**Last completed:** 06 Profile Save Logic
+**Next:** 07 AI Profile Extraction from Resume
 
 ---
 
@@ -23,8 +23,8 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 2 — Profile Page
 
-- [ ] 05 Profile Page — Full UI
-- [ ] 06 Profile Save Logic
+- [x] 05 Profile Page — Full UI
+- [x] 06 Profile Save Logic
 - [ ] 07 AI Profile Extraction from Resume
 - [ ] 08 Resume PDF Generation from Profile
 
@@ -70,3 +70,4 @@ _Add decisions here as they are made during implementation._
 
 
 
+## Notes\n\n- **06 Profile Save Logic:** Created a Server Action `saveProfileInfo` in `actions/profile.ts` to handle the database mutation securely. It uses `zod` for payload validation and updates the `profiles` table for the currently authenticated user using `insforge.database.from('profiles').update()`. Form `ProfileInformationForm.tsx` was updated to be a controlled component using HTML input `name` attribute extraction and TypeScript casting, showing success/error toasts directly in the UI without relying on heavy external state management libraries.

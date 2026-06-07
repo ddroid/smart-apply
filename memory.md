@@ -1,40 +1,34 @@
-# Memory — Feature 04 Database Schema
+# Memory — 05 Profile Page — Full UI
 
-Last updated: 2026-06-07 01:15:00
+Last updated: 2026-06-07 02:22:00
 
 ## What was built
 
-- **Database Schema**:
-  - Created [db/schema.sql](file:///home/ddroid/Projects/job-pilot/db/schema.sql) which defines the core tables: `profiles`, `agent_runs`, `jobs`, and `agent_logs`.
-  - Implemented Row Level Security (RLS) policies for all tables to ensure data isolation.
-  - Added a trigger `on_auth_user_created` to automatically create a profile in the `profiles` table when a new user signs up.
-  - Added a trigger `update_profiles_updated_at` to handle automatic timestamp updates for profiles.
-- **Storage Policies**:
-  - Created [db/storage_policies.sql](file:///home/ddroid/Projects/job-pilot/db/storage_policies.sql) to manage RLS for the `resumes` storage bucket, ensuring folder-level isolation based on `auth.uid()`.
-- **Progress Tracking Updated**:
-  - Marked Step 04 Database Schema as completed in [progress-tracker.md](file:///home/ddroid/Projects/job-pilot/context/progress-tracker.md).
-  - Advanced the current status to Phase 2 — Profile Page.
+- **Profile Page Layout**: Created the main layout at `app/profile/page.tsx` utilizing the global Navbar and Footer.
+- **Profile Components**:
+  - `components/profile/ProfileAlert.tsx`: Implemented the "Profile needs attention" banner with an SVG progress ring and missing field badges.
+  - `components/profile/ResumeSection.tsx`: Created the placeholder section for drag-and-drop resume uploading and PDF generation.
+  - `components/profile/ProfileInformationForm.tsx`: Built the comprehensive profile form complete with interactive tag inputs (using `"use client"`) for Skills and Industries, mapping precisely to the requested mock data and structure (Personal, Professional, Work Experience, Education, and Job Preferences).
+- **Progress Tracker Updated**: Marked "05 Profile Page — Full UI" as completed.
 
 ## Decisions made
 
-- **Profile Automation**: Decided to use a Postgres trigger (`on_auth_user_created`) on the `auth.users` table to ensure every registered user has a corresponding row in `public.profiles` immediately, simplifying frontend logic.
-- **Data Isolation**: Chose to enforce strict RLS policies where `auth.uid() = user_id` (or `id` for profiles) to guarantee that users can only access their own data.
-- **Storage Structure**: Adopted a folder-per-user structure (`bucket/user_id/file`) for resumes to allow granular RLS control in Supabase/InsForge storage.
+- **Component Architecture**: Broke the profile page into discrete, focused components (`ProfileAlert`, `ResumeSection`, `ProfileInformationForm`) rather than maintaining a monolithic page file. Only the form was marked as a client component to isolate interactive states.
+- **Styling**: Strictly adhered to the UI tokens (Catppuccin Latte palette and Material Design specifications) established in the architecture for all visual elements, including the use of explicit CSS variable references for the custom SVG progress indicator.
 
 ## Problems solved
 
-- **Initial Setup**: Established the foundational data model for the entire application, including the relationship between users, agent runs, jobs found, and detailed logs.
+- The `lucide-react` dependency was missing and was installed to render the required icons (AlertCircle, CloudUpload, FileText, Plus, X).
 
 ## Current state
 
-- Phase 1 Foundation is complete.
-- Database schema is fully defined and ready for deployment.
-- Storage policies are configured for secure resume handling.
-- Development is now moving into Phase 2: Profile Page.
+- The UI layout for the Profile Page is fully implemented and visually matches the requested design using mock data.
+- The project successfully compiles.
+- Save/backend wiring is not yet implemented.
 
 ## Next session starts with
 
-- **05 Profile Page — Full UI**: Implement the comprehensive profile editor UI as defined in the Phase 2 build plan, allowing users to complete their candidate profiles.
+- **06 Profile Save Logic**: Wire the newly built profile form to the InsForge database by creating the Server Action in `actions/profile.ts` and linking it to the save button.
 
 ## Open questions
 
