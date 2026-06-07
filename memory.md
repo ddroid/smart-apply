@@ -1,28 +1,25 @@
-# Memory — Feature 12 (Job Details Page)
+# Memory — Dashboard Phase (Features 14, 15, 16)
 
-Last updated: 2026-06-07 23:10
+Last updated: 2026-06-08
 
 ## What was built
-- Built Feature 12: Job Details Page Full UI.
-- Modified `components/find-jobs/JobList.tsx` to make job rows interactive and keyboard-accessible.
-- Created `app/find-jobs/[id]/page.tsx` for server-side fetching of a specific job (secured by `user_id`) using InsForge.
-- Created `app/find-jobs/[id]/loading.tsx` to provide an immediate skeleton UI while the route resolves.
-- Created four UI components in `components/job-details/`: `JobInfo.tsx`, `MatchScore.tsx`, `JobDescription.tsx`, and `CompanyResearch.tsx`.
-- Updated `context/ui-registry.md` with the new design system patterns (Mini Info Cards, Status Chips, Info Banners).
+- **Feature 14 (Dashboard Page — Full UI):** Installed `recharts` and established the main Dashboard grid layout. Created static baseline components: `ProfileAlert.tsx`, `StatsBar.tsx`, `RecentActivity.tsx`, and `AnalyticsCharts.tsx`.
+- **Feature 15 (Stats Bar — Real Data):** Upgraded `StatsBar.tsx` into a Server Component. Wired it to the `insforge.database` using 4 concurrent queries (with `count: "exact", head: true` for pure zero-payload counts) to render live statistics.
+- **Feature 16 (Recent Activity — Real Data):** Upgraded `RecentActivity.tsx` to fetch the top 10 rows from both `agent_runs` and `jobs` (where `company_research` is present). Merged, formatted, and sorted the results in-memory into a unified timeline capped at the top 5 recent events.
 
 ## Decisions made
-- Used Server Components for data fetching on the details page to reduce client bundle and secure the request.
-- Decided to display Adzuna's description snippet as-is with an informational warning banner linking to the source, rather than building fake expand/collapse functionality, since the database only holds a snippet.
+- **Concurrent Server Fetching:** Opted to use `Promise.all` directly inside Next.js Server Components for multiple small aggregations instead of defining custom SQL RPCs to maintain speed without altering the database schema.
+- **Chart Naming Alignment:** Overrode the UI mockup title "Resume Tailoring Activity" with "Company Research Activity" to accurately mirror our underlying event analytics schema in PostHog.
+- **Strict PostHog Compliance:** Deliberately deleted standard page-view tracking (`dashboard_viewed`) to adhere to our rigid `code-standards.md` policy capping the project at only 4 registered events.
 
 ## Problems solved
-- Fixed a perceived unresponsiveness issue by implementing a `loading.tsx` file for the dynamic route.
-- Addressed accessibility issues by ensuring the clickable `<tr>` elements in the JobList can be focused and triggered via the `Enter` key.
+- **SDK Drift:** Handled `insforge.auth.getUser()` and `insforge.from()` crashing by updating method calls to match the project's exact installed `@insforge/sdk` version (`insforge.auth.getCurrentUser()` and `insforge.database.from()`).
 
 ## Current state
-- Feature 12 is fully complete. The UI flawlessly matches the design tokens, loads quickly, handles server data securely, and is production-ready. 
+- The project is deep in Phase 5. The core Dashboard UI is complete, fully responsive, and successfully populating real database aggregations and timeline activities. The `ui-registry.md` and `code-standards.md` are completely up-to-date.
 
 ## Next session starts with
-- Phase 4, Feature 13: Company Research Agent. Begin building the backend logic to use Browserbase/Stagehand to research the company and scrape the full job description from the original listing URL.
+- **Feature 17 (Analytics Charts — PostHog Data):** Wiring the 3 placeholder Recharts implementations in `AnalyticsCharts.tsx` directly to the PostHog API to retrieve historical trends.
 
 ## Open questions
-- None right now.
+- Since Recharts is a client component, what will be the preferred strategy for fetching PostHog Server API data: embedding a data-fetching Server Component wrapper, or exposing a Next.js API route?

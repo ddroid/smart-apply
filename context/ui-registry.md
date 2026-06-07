@@ -211,3 +211,48 @@ Last updated: 2026-06-07
 
 **Pattern notes:**
 A neutral, embedded alert block placed inline with content to convey secondary information or warnings (like truncation notices) without interrupting the visual hierarchy.
+
+### Trend Badges (stat cards)
+File: `components/dashboard/StatsBar.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Background       | `bg-success-light` |
+| Text color       | `text-success` |
+| Border radius    | `rounded-full`  |
+| Spacing          | `px-3 py-0.5`   |
+| Font styling     | `text-[12px] font-semibold` |
+
+**Pattern notes:**
+Used inside stat cards to show positive or negative change trends.
+
+### Activity Dots (timeline)
+File: `components/dashboard/RecentActivity.tsx`
+Last updated: 2026-06-07
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Outer container  | `w-4 h-4 rounded-full border-2 border-surface flex items-center justify-center` |
+| Job Found Outer  | `bg-success-light` |
+| Job Found Inner  | `bg-success-alt` (`w-2 h-2 rounded-full`) |
+| Researched Outer | `bg-info-light` |
+| Researched Inner | `bg-info` (`w-2 h-2 rounded-full`) |
+| General Outer    | `bg-accent-light` |
+| General Inner    | `bg-accent` (`w-2 h-2 rounded-full`) |
+
+**Pattern notes:**
+Used as bullet points in a timeline/feed, applying semantic colors based on the activity type.
+
+### Dashboard Analytics Charts
+File: `components/dashboard/AnalyticsCharts.tsx`
+Last updated: 2026-06-07
+
+| Property         | Color Hex (Recharts) | Semantic Token    |
+| ---------------- | -------------------- | ----------------- |
+| Area Fill        | `#8839ef`            | `--color-accent`  |
+| Bar Fill (Res)   | `#1e66f5`            | `--color-info`    |
+| Bar Fill (Match) | `#40a02b`            | `--color-success` |
+
+**Pattern notes:**
+Recharts doesn't natively parse Tailwind classes in some properties like gradients, so we hardcode the hex values from `ui-tokens.md` for specific chart components.

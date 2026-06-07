@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 5 — Dashboard
-**Last completed:** 13 Company Research Agent
-**Next:** 14 Dashboard Page — Full UI
+**Last completed:** 16 Recent Activity — Real Data
+**Next:** 17 Analytics Charts — PostHog Data
 
 ---
 
@@ -41,9 +41,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 5 — Dashboard
 
-- [ ] 14 Dashboard Page — Full UI
-- [ ] 15 Stats Bar — Real Data
-- [ ] 16 Recent Activity — Real Data
+- [x] 14 Dashboard Page — Full UI
+- [x] 15 Stats Bar — Real Data
+- [x] 16 Recent Activity — Real Data
 - [ ] 17 Analytics Charts — PostHog Data
 
 ---
@@ -51,6 +51,10 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Decisions Made During Build
 
 _Add decisions here as they are made during implementation._
+
+- **Concurrent Server Fetching:** Opted to use `Promise.all` directly inside Next.js Server Components for multiple small aggregations instead of defining custom SQL RPCs to maintain speed without altering the database schema.
+- **Chart Naming Alignment:** Overrode the UI mockup title "Resume Tailoring Activity" with "Company Research Activity" to accurately mirror our underlying event analytics schema in PostHog.
+- **Strict PostHog Compliance:** Deliberately deleted standard page-view tracking (`dashboard_viewed`) to adhere to our rigid `code-standards.md` policy capping the project at only 4 registered events.
 
 ---
 
@@ -69,4 +73,8 @@ _Add decisions here as they are made during implementation._
 - **08 Resume PDF Generation from Profile:** Created `POST /api/resume/generate` endpoint forcing Node.js runtime to support `@react-pdf/renderer`. It takes raw profile data, prompts Groq LLM for a polished JSON with a professional summary and tightened bullet points, then maps that JSON to a single-page PDF `<Document>` template. The buffer is saved dynamically to the InsForge `resumes` bucket, bypassing CDN caching, and the profile is updated with the new `resume_pdf_url`. Connected the "Generate PDF" button in `ResumeSection.tsx` to call the endpoint and handle loading/success states.
 - **09 Find Jobs Page — Full UI:** Built the pixel-perfect `FindJobsPage` UI matching the provided design exactly, including a dedicated `SearchControls` card with an embedded green success banner, and a rich `JobList` table featuring a filter bar, robust mock data, match score progress bars using correct token colors, and pagination controls.
 - **12 Job Details Page — Full UI:** Completed UI for the dynamic `[id]` page including server-side data fetching and components for `JobInfo`, `MatchScore`, `JobDescription`, and `CompanyResearch` (empty state).
-- **13 Company Research Agent:** Implemented a Next.js server-side API endpoint that uses `@browserbasehq/stagehand` to visit up to 3 company subpages based on the Adzuna `redirect_url` derivation. Synthesized the research via Groq (`openai/gpt-oss-120b`) using the OpenAI SDK, securely saved the full 9-property structured JSON dossier to the InsForge database, captured a PostHog event, and fully rendered the `CompanyResearch.tsx` component with real-time UI state.
+- **13 Company Research Agent:** Implemented a Next.js server-side API endpoint that uses `@browserbasehq/stagehand` to visit up to 2 company subpages based on the Adzuna `redirect_url` derivation. Synthesized the research via Groq (`openai/gpt-oss-120b`) using the OpenAI SDK natively by passing `modelName: "openai/openai/gpt-oss-120b"` to Stagehand. Hardened the LLM JSON generation by flattening the extraction schema arrays and manually filtering out raw DOM IDs (e.g., `[0-211]`) to prevent Stagehand 404 navigation loops. Overrode hallucinated LLM sources by strictly mapping actual backend URLs visited directly into the final `sources` array for valid UI rendering.
+- **14 Dashboard Page — Full UI:** Installed `recharts` and established the main Dashboard grid layout. Created static baseline components: `ProfileAlert.tsx`, `StatsBar.tsx`, `RecentActivity.tsx`, and `AnalyticsCharts.tsx`.
+- **15 Stats Bar — Real Data:** Upgraded `StatsBar.tsx` into a Server Component. Wired it to the `insforge.database` using 4 concurrent queries (with `count: "exact", head: true` for pure zero-payload counts) to render live statistics.
+- **16 Recent Activity — Real Data:** Upgraded `RecentActivity.tsx` to fetch the top 10 rows from both `agent_runs` and `jobs` (where `company_research` is present). Merged, formatted, and sorted the results in-memory into a unified timeline capped at the top 5 recent events.
+- **SDK Drift:** Handled `insforge.auth.getUser()` and `insforge.from()` crashing by updating method calls to match the project's exact installed `@insforge/sdk` version (`insforge.auth.getCurrentUser()` and `insforge.database.from()`).
