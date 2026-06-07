@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 2 — Profile Page
-**Last completed:** 06 Profile Save Logic
-**Next:** 07 AI Profile Extraction from Resume
+**Last completed:** 07 AI Profile Extraction from Resume
+**Next:** 08 Resume PDF Generation from Profile
 
 ---
 
@@ -25,7 +25,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 - [x] 05 Profile Page — Full UI
 - [x] 06 Profile Save Logic
-- [ ] 07 AI Profile Extraction from Resume
+- [x] 07 AI Profile Extraction from Resume
 - [ ] 08 Resume PDF Generation from Profile
 
 ### Phase 3 — Find Jobs Page
@@ -64,10 +64,5 @@ _Add decisions here as they are made during implementation._
 - **02 Auth Consolidate & Clean Up:** Established the finalized Variant 3 design as the official, sole login page of the application. Rewrote `components/auth/LoginManager.tsx` to remove all other 4 temporary variants and the floating switcher pill. Deleted the dynamic routes under `app/(auth)/login/[id]` and simplified `app/(auth)/login/page.tsx` to render `<LoginManager />` as standard. Deleted the obsolete root-level dynamic redirect handler `app/[id]` and verified that no other temporary variant configuration or dynamic paths remain in the codebase.
 - **03 PostHog Initialization:** Created `lib/posthog-client.ts` to export client-side PostHog initialization support. Updated `lib/posthog-server.ts` to export `createPostHogServer` for non-cached client instantiation in serverless environments. Refactored the dashboard page, logout route, and token-setting route to use the new server client and properly call `await posthog.shutdown()` to prevent event dropping in Next.js. Verified that `npm run build` succeeds without compilation issues.
 - **04 Database Schema:** Created public schemas for `profiles`, `agent_runs`, `jobs`, and `agent_logs`. Added a trigger `on_auth_user_created` to automatically populate candidate profiles on registration, configured foreign key and metadata indexes for fast queries, and created a private `resumes` storage bucket with folder-level isolation RLS policies.
-
-
-
-
-
-
-## Notes\n\n- **06 Profile Save Logic:** Created a Server Action `saveProfileInfo` in `actions/profile.ts` to handle the database mutation securely. It uses `zod` for payload validation and updates the `profiles` table for the currently authenticated user using `insforge.database.from('profiles').update()`. Form `ProfileInformationForm.tsx` was updated to be a controlled component using HTML input `name` attribute extraction and TypeScript casting, showing success/error toasts directly in the UI without relying on heavy external state management libraries.
+- **06 Profile Save Logic:** Created a Server Action `saveProfileInfo` in `actions/profile.ts` to handle the database mutation securely. It uses `zod` for payload validation and updates the `profiles` table for the currently authenticated user using `insforge.database.from('profiles').update()`. Form `ProfileInformationForm.tsx` was updated to be a controlled component using HTML input `name` attribute extraction and TypeScript casting, showing success/error toasts directly in the UI without relying on heavy external state management libraries.
+- **07 AI Profile Extraction from Resume:** Created `POST /api/resume/extract` using `pdf-parse`, `ai` SDK, and `@ai-sdk/openai` configured for Groq's `openai/gpt-oss-120b` model to extract structured data from uploaded resumes. Updated `ResumeSection.tsx` to handle direct file uploads to InsForge Storage and trigger the extraction API. Modified `ProfileClient.tsx` to utilize React keys to force remount `ProfileInformationForm` with the newly extracted initial data without requiring complex state management for uncontrolled inputs.

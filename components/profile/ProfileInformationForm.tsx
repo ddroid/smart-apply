@@ -4,12 +4,36 @@ import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { saveProfileInfo } from "@/actions/profile";
 
+interface WorkExperience {
+  id: string;
+  company: string;
+  title: string;
+  start_date: string;
+  end_date: string | null;
+  description: string;
+}
+
+interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  field_of_study: string | null;
+  graduation_year: string | null;
+}
+
 export function ProfileInformationForm({ initialData }: { initialData?: any }) {
   const [skills, setSkills] = useState<string[]>(initialData?.skills?.length ? initialData.skills : []);
   const [newSkill, setNewSkill] = useState("");
 
   const [industries, setIndustries] = useState<string[]>(initialData?.industries || []);
   const [newIndustry, setNewIndustry] = useState("");
+
+  const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>(
+    (initialData?.work_experience || []).map((exp: any) => ({ ...exp, id: crypto.randomUUID() }))
+  );
+  const [educations, setEducations] = useState<Education[]>(
+    (initialData?.education || []).map((edu: any) => ({ ...edu, id: crypto.randomUUID() }))
+  );
 
   const [isSaving, setIsSaving] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error" | null; text: string }>({ type: null, text: "" });
@@ -38,6 +62,18 @@ export function ProfileInformationForm({ initialData }: { initialData?: any }) {
 
   const mapEnum = (val: string, options: string[], defaultOpt = "") => {
     return options.includes(val) ? val : defaultOpt;
+  };
+
+  const updateWorkExperience = (index: number, field: string, value: string | boolean) => {
+    const updated = [...workExperiences];
+    updated[index] = { ...updated[index], [field]: value };
+    setWorkExperiences(updated);
+  };
+
+  const updateEducation = (index: number, field: string, value: string) => {
+    const updated = [...educations];
+    updated[index] = { ...updated[index], [field]: value };
+    setEducations(updated);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -95,9 +131,9 @@ export function ProfileInformationForm({ initialData }: { initialData?: any }) {
       skills: skills,
       industries: industries,
       
-      // Keeping these as empty arrays for now as the UI uses dummy static inputs
-      work_experience: [],
-      education: [],
+      // Strip out the client-only 'id' field before saving
+      work_experience: workExperiences.map(({ id, ...rest }) => rest),
+      education: educations.map(({ id, ...rest }) => rest),
       
       job_titles_seeking: jobTitlesArr,
       remote_preference: mapEnum(remoteMap[remotePrefVal], ["remote", "onsite", "hybrid", "any"]) as "" | "remote" | "onsite" | "hybrid" | "any",
@@ -271,44 +307,56 @@ export function ProfileInformationForm({ initialData }: { initialData?: any }) {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-bold text-text-primary">Work Experience</h3>
-            <button type="button" className="flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-dark transition-colors">
+            <button 
+              type="button" 
+              onClick={() => setWorkExperiences([{ id: crypto.randomUUID(), company: "", title: "", start_date: "", end_date: "", description: "" }, ...workExperiences])}
+              className="flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-dark transition-colors"
+            >
               <Plus className="w-4 h-4" /> Add role
             </button>
           </div>
           
-          <div className="border border-border-light rounded-xl p-5 bg-surface-muted/10 relative">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Company Name</label>
-                <input type="text" placeholder="E.g. Vercel" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Job Title</label>
-                <input type="text" placeholder="E.g. Frontend Engineer" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Start Date</label>
-                <input type="text" placeholder="E.g. January 2022" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between items-center mb-0.5">
-                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">End Date</label>
-                  <label className="flex items-center gap-1.5 text-xs text-text-secondary cursor-pointer">
-                    <input type="checkbox" defaultChecked className="accent-accent w-3.5 h-3.5" />
-                    Currently working here
-                  </label>
+          <div className="flex flex-col gap-4">
+            {workExperiences.map((exp, index) => (
+              <div key={exp.id} className="border border-border-light rounded-xl p-5 bg-surface-secondary/20 relative">
+                <button type="button" onClick={() => setWorkExperiences(workExperiences.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-text-muted hover:text-error transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 mt-2">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Company Name</label>
+                    <input type="text" value={exp.company || ""} onChange={(e) => updateWorkExperience(index, "company", e.target.value)} placeholder="E.g. Vercel" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Job Title</label>
+                    <input type="text" value={exp.title || ""} onChange={(e) => updateWorkExperience(index, "title", e.target.value)} placeholder="E.g. Frontend Engineer" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Start Date</label>
+                    <input type="text" value={exp.start_date || ""} onChange={(e) => updateWorkExperience(index, "start_date", e.target.value)} placeholder="E.g. Jan 2022" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex justify-between items-center mb-0.5">
+                      <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">End Date</label>
+                    </div>
+                    <input type="text" value={exp.end_date || ""} onChange={(e) => updateWorkExperience(index, "end_date", e.target.value)} placeholder="E.g. Present" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
                 </div>
-                <input type="text" disabled placeholder="---------- ----" className="bg-surface-secondary border border-border-light rounded-xl px-3.5 py-2.5 text-sm text-text-muted cursor-not-allowed opacity-70 focus:outline-none" />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Key Responsibilities</label>
+                  <textarea 
+                    rows={3} 
+                    value={exp.description || ""}
+                    onChange={(e) => updateWorkExperience(index, "description", e.target.value)}
+                    placeholder="E.g. Built Next.js features and optimized web vitals."
+                    className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y" 
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Key Responsibilities</label>
-              <textarea 
-                rows={3} 
-                placeholder="E.g. Built Next.js features and optimized web vitals. Led a team of 3 developers."
-                className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y" 
-              />
-            </div>
+            ))}
+            {workExperiences.length === 0 && (
+              <p className="text-sm text-text-muted italic text-center py-4">No work experience added yet.</p>
+            )}
           </div>
         </div>
 
@@ -316,30 +364,46 @@ export function ProfileInformationForm({ initialData }: { initialData?: any }) {
 
         {/* Education */}
         <div>
-          <h3 className="text-base font-bold text-text-primary mb-4">Education</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Highest Degree</label>
-              <select className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 appearance-none">
-                <option>High School</option>
-                <option>Associate Degree</option>
-                <option>Bachelor&apos;s Degree</option>
-                <option>Master&apos;s Degree</option>
-                <option>Doctorate (PhD)</option>
-              </select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Field of Study</label>
-              <input type="text" placeholder="E.g. Computer Science" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Institution Name</label>
-              <input type="text" placeholder="E.g. State University" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Graduation Year</label>
-              <input type="text" placeholder="YYYY" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
-            </div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-text-primary">Education</h3>
+            <button 
+              type="button" 
+              onClick={() => setEducations([{ id: crypto.randomUUID(), institution: "", degree: "", field_of_study: "", graduation_year: "" }, ...educations])}
+              className="flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-dark transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Add education
+            </button>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            {educations.map((edu, index) => (
+              <div key={edu.id} className="border border-border-light rounded-xl p-5 bg-surface-secondary/20 relative">
+                <button type="button" onClick={() => setEducations(educations.filter((_, i) => i !== index))} className="absolute top-4 right-4 text-text-muted hover:text-error transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Highest Degree</label>
+                    <input type="text" value={edu.degree || ""} onChange={(e) => updateEducation(index, "degree", e.target.value)} placeholder="E.g. Bachelor's Degree" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Field of Study</label>
+                    <input type="text" value={edu.field_of_study || ""} onChange={(e) => updateEducation(index, "field_of_study", e.target.value)} placeholder="E.g. Computer Science" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Institution Name</label>
+                    <input type="text" value={edu.institution || ""} onChange={(e) => updateEducation(index, "institution", e.target.value)} placeholder="E.g. State University" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Graduation Year</label>
+                    <input type="text" value={edu.graduation_year || ""} onChange={(e) => updateEducation(index, "graduation_year", e.target.value)} placeholder="YYYY" className="bg-surface border border-border rounded-xl px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                  </div>
+                </div>
+              </div>
+            ))}
+            {educations.length === 0 && (
+              <p className="text-sm text-text-muted italic text-center py-4">No education added yet.</p>
+            )}
           </div>
         </div>
 

@@ -80,3 +80,30 @@ export async function saveProfileInfo(data: ProfilePayload) {
     return { success: false, error: "An unexpected error occurred." };
   }
 }
+
+export async function saveResumeUrl(url: string) {
+  try {
+    const insforge = await createInsforgeServer();
+    const { data: { user }, error: authError } = await insforge.auth.getCurrentUser();
+    
+    if (authError || !user) {
+      return { success: false, error: "Unauthorized." };
+    }
+
+    const { error: updateError } = await insforge.database
+      .from("profiles")
+      .update({ resume_pdf_url: url })
+      .eq("id", user.id);
+
+    if (updateError) {
+      console.error("Resume URL update error:", updateError);
+      return { success: false, error: "Failed to update resume URL." };
+    }
+
+    revalidatePath("/profile");
+    return { success: true };
+  } catch (error) {
+    console.error("Server action error:", error);
+    return { success: false, error: "An unexpected error occurred." };
+  }
+}

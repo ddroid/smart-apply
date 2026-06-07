@@ -87,4 +87,6 @@ Last updated: 2026-06-07
 | Border           | `border-2 border-dashed border-border-light` |
 | Border radius    | `rounded-xl`    |
 | Spacing          | `p-8 flex flex-col items-center justify-center` |
-| Hover state      | `hover:bg-surface-secondary/50` |
+| Hover state      | `hover:bg-surface-secondary/50 cursor-pointer` |
+| Drag active state| `border-accent bg-accent/5` |
+| Disabled state   | `border-accent/50 opacity-70 bg-surface-secondary/30` |

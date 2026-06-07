@@ -1,8 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ProfileAlert } from "@/components/profile/ProfileAlert";
-import { ResumeSection } from "@/components/profile/ResumeSection";
-import { ProfileInformationForm } from "@/components/profile/ProfileInformationForm";
+import { ProfileClient } from "@/components/profile/ProfileClient";
 import { createInsforgeServer } from "@/lib/insforge-server";
 import { redirect } from "next/navigation";
 
@@ -25,10 +24,10 @@ export default async function ProfilePage() {
       <Navbar />
       <main className="flex-1 flex flex-col items-center p-8 max-w-[1440px] mx-auto w-full">
         <ProfileAlert />
-        <ResumeSection />
-        <ProfileInformationForm initialData={profile || {}} />
+        <ProfileClient initialProfile={profile || {}} />
       </main>
       <Footer />
     </div>
   );
 }
+

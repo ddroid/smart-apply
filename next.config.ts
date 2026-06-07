@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
     ];
   },
   skipTrailingSlashRedirect: true,
+  serverExternalPackages: ["pdf-parse"],
 };
 
 export default nextConfig;
