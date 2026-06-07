@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
   },
   skipTrailingSlashRedirect: true,
   serverExternalPackages: ["pdf-parse"],
+  output: "standalone",
 };
 
 export default nextConfig;
