@@ -33,6 +33,36 @@ export async function searchJobs(
 
   const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?${params}`;
 
+  if (process.env.BROWSERBASE_API_KEY) {
+    console.log("Using Browserbase proxy for Adzuna to bypass IP blocks...");
+    const proxyResponse = await fetch("https://api.browserbase.com/v1/fetch", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-BB-API-Key": process.env.BROWSERBASE_API_KEY,
+      },
+      body: JSON.stringify({
+        url,
+        proxies: true
+      })
+    });
+    
+    if (!proxyResponse.ok) {
+       console.error("Browserbase error: ", await proxyResponse.text());
+       throw new Error(`Browserbase proxy failed: ${proxyResponse.status}`);
+    }
+    
+    const bbData = await proxyResponse.json();
+    try {
+      const parsed = typeof bbData.content === 'string' ? JSON.parse(bbData.content) : bbData.content;
+      return parsed.results || [];
+    } catch (err) {
+      console.error("Failed to parse Browserbase JSON content:", err);
+      return [];
+    }
+  }
+
+  // Fallback to direct https if no Browserbase key is present
   return new Promise((resolve, reject) => {
     const https = require("https");
     const req = https.get(url, (res: any) => {
