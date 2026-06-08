@@ -28,6 +28,8 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+# Force IPv4 DNS resolution to prevent fetch ETIMEDOUT errors in Docker environments without IPv6
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
