@@ -31,14 +31,38 @@ export async function searchJobs(
     params.set("where", location);
   }
 
-  const response = await fetch(
-    `https://api.adzuna.com/v1/api/jobs/${country}/search/1?${params}`,
-  );
+  const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?${params}`;
 
-  if (!response.ok) {
-    throw new Error(`Adzuna API error: ${response.status}`);
-  }
+  return new Promise((resolve, reject) => {
+    const https = require("https");
+    const req = https.get(url, (res: any) => {
+      let data = "";
 
-  const data = await response.json();
-  return data.results || [];
+      if (res.statusCode < 200 || res.statusCode >= 300) {
+        return reject(new Error(`Adzuna API error: ${res.statusCode}`));
+      }
+
+      res.on("data", (chunk: any) => {
+        data += chunk;
+      });
+
+      res.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          resolve(parsed.results || []);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+
+    req.on("error", (e: any) => {
+      reject(e);
+    });
+    
+    // Add a reasonable timeout
+    req.setTimeout(10000, () => {
+      req.destroy(new Error("Request timeout"));
+    });
+  });
 }
