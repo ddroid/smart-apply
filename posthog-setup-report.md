@@ -1,7 +1,7 @@
 <wizard-report>
 # PostHog post-wizard report
 
-The wizard has completed a deep integration of PostHog analytics into JobPilot. Here is a summary of what was set up:
+The wizard has completed a deep integration of PostHog analytics into Smart Apply. Here is a summary of what was set up:
 
 - **Client-side initialization** via `instrumentation-client.ts` using the Next.js 15.3+ pattern — no provider component needed. PostHog is initialized with a reverse proxy (`/ingest`) to avoid ad-blockers, exception tracking enabled, and debug mode in development.
 - **Reverse proxy rewrites** added to `next.config.ts` so all PostHog traffic routes through the app's own domain (`/ingest/*`).
