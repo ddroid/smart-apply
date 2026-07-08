@@ -15,7 +15,7 @@ export function Features() {
     {
       title: "Know the Company Before You Apply",
       description:
-        "Stop guessing what a company is about. JobPilot browses their site and gives you everything you need to apply with confidence.",
+        "Stop guessing what a company is about. Smart Apply browses their site and gives you everything you need to apply with confidence.",
     },
     {
       title: "Keep track of every application",
@@ -33,7 +33,7 @@ export function Features() {
     {
       title: "AI-Powered Job Matching",
       description:
-        "Stop guessing which jobs are worth applying to. JobPilot scores every role against your actual skills so you focus on the ones that matter.",
+        "Stop guessing which jobs are worth applying to. Smart Apply scores every role against your actual skills so you focus on the ones that matter.",
     },
     {
       title: "Focus on the right roles",

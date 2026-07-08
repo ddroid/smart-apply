@@ -2,6 +2,8 @@
 
 import { z } from "zod";
 import { createInsforgeServer } from "@/lib/insforge-server";
+import { computeProfileCompletion } from "@/lib/profile-completion";
+import { createPostHogServer } from "@/lib/posthog-server";
 import { revalidatePath } from "next/cache";
 
 // Match the database schema constraints
@@ -56,11 +58,20 @@ export async function saveProfileInfo(data: ProfilePayload) {
 
     const validatedData = profileSchema.parse(cleanedData);
 
+    const { data: existingProfile } = await insforge.database
+      .from("profiles")
+      .select("is_complete")
+      .eq("id", user.id)
+      .single();
+
+    const completion = computeProfileCompletion(validatedData);
+    const wasComplete = existingProfile?.is_complete ?? false;
+
     const { error: updateError } = await insforge.database
       .from("profiles")
       .update({
         ...validatedData,
-        is_complete: true // Mark as complete once they save the form
+        is_complete: completion.isComplete,
       })
       .eq("id", user.id);
 
@@ -69,7 +80,18 @@ export async function saveProfileInfo(data: ProfilePayload) {
       return { success: false, error: "Failed to update profile. Please try again." };
     }
 
+    if (completion.isComplete && !wasComplete) {
+      const posthog = createPostHogServer();
+      posthog.capture({
+        distinctId: user.id,
+        event: "profile_completed",
+        properties: { userId: user.id },
+      });
+      await posthog.shutdown();
+    }
+
     revalidatePath("/profile");
+    revalidatePath("/dashboard");
 
     return { success: true };
   } catch (error) {

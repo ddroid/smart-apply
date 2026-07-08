@@ -65,7 +65,8 @@ CREATE TABLE IF NOT EXISTS public.jobs (
   missing_skills text[] DEFAULT '{}',
   company_research jsonb DEFAULT NULL,
   posted_at timestamptz,
-  found_at timestamptz NOT NULL DEFAULT now()
+  found_at timestamptz NOT NULL DEFAULT now(),
+  researched_at timestamptz
 );
 
 -- 4. Agent Logs Table
@@ -143,6 +144,7 @@ CREATE INDEX IF NOT EXISTS idx_agent_runs_started_at ON public.agent_runs(starte
 CREATE INDEX IF NOT EXISTS idx_jobs_user_id ON public.jobs(user_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_run_id ON public.jobs(run_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_found_at ON public.jobs(found_at DESC);
+CREATE INDEX IF NOT EXISTS idx_jobs_researched_at ON public.jobs(researched_at DESC);
 CREATE INDEX IF NOT EXISTS idx_jobs_match_score ON public.jobs(match_score DESC);
 CREATE INDEX IF NOT EXISTS idx_agent_logs_user_id ON public.agent_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_agent_logs_run_id ON public.agent_logs(run_id);

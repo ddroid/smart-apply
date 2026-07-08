@@ -140,36 +140,49 @@ Last updated: 2026-06-07
 **Pattern notes:**
 Small linear progress indicator used inside data tables. Colors adapt based on score threshold (>=90: success, >=80: info, >=70: warning, <70: error).
 
-### Filter Modal (Overlay)
+### Job List Filter Bar
 File: `components/find-jobs/JobList.tsx`
-Last updated: 2026-06-07
+Last updated: 2026-07-08
 
 | Property         | Class           |
 | ---------------- | --------------- |
-| Backdrop         | `bg-overlay/60` |
-| Container Bg     | `bg-surface`    |
-| Border           | `border border-border` |
-| Radius           | `rounded-xl`    |
-| Shadow           | `shadow-2xl`    |
+| Container        | `p-4 border-b border-border flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between` |
+| Search input     | `bg-surface-secondary/50 border border-border rounded-lg pl-10 pr-4 py-2.5 text-sm` |
+| Select dropdown  | `appearance-none bg-surface border border-border rounded-lg pl-4 pr-10 py-2.5 text-sm font-medium` |
+| Chevron icon     | `absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none` |
 
-### Filter Pill (Toggleable)
+**Pattern notes:**
+Inline filter bar with text search plus match filter and sort dropdowns. No modal overlays. Pagination uses 20 items per page.
+
+### Source Badge (Job List)
 File: `components/find-jobs/JobList.tsx`
-Last updated: 2026-06-07
+Last updated: 2026-07-08
 
 | Property         | Class           |
 | ---------------- | --------------- |
-| Active Bg/Text   | `bg-text-primary text-surface` |
-| Inactive Bg/Text | `bg-surface-secondary/40 text-text-secondary hover:bg-surface-secondary/80` |
-| Radius           | `rounded-lg`    |
-| Padding          | `px-4 py-1.5`   |
-| Font             | `text-sm font-medium transition-colors` |
+| Search badge     | `bg-accent-light text-accent` |
+| URL badge        | `bg-surface-secondary text-text-secondary` |
+| Shared           | `inline-flex px-3 py-1 rounded-full text-xs font-medium` |
+
+### Adzuna Credit
+File: `components/find-jobs/AdzunaCredit.tsx`
+Last updated: 2026-07-08
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Text             | `text-xs text-text-muted text-center` |
+| Link             | `text-text-secondary hover:text-text-primary transition-colors underline underline-offset-2` |
+
+**Pattern notes:**
+Attribution line placed below the job list table and on the job details page.
 
 ### Mini Info Cards (Data Grid)
 File: `components/job-details/JobInfo.tsx`
-Last updated: 2026-06-07
+Last updated: 2026-07-08
 
 | Property         | Class           |
 | ---------------- | --------------- |
+| Grid layout      | `grid grid-cols-2 md:grid-cols-4 gap-6` |
 | Background       | `bg-surface`    |
 | Border           | `border border-border` |
 | Border radius    | `rounded-2xl`   |
@@ -255,4 +268,18 @@ Last updated: 2026-06-07
 | Bar Fill (Match) | `#40a02b`            | `--color-success` |
 
 **Pattern notes:**
-Recharts doesn't natively parse Tailwind classes in some properties like gradients, so we hardcode the hex values from `ui-tokens.md` for specific chart components.
+Recharts chart fills use `var(--color-accent)`, `var(--color-info)`, and `var(--color-success)` from design tokens.
+
+### Mobile Navigation Menu
+File: `components/layout/Navbar.tsx`
+Last updated: 2026-07-08
+
+| Property         | Class           |
+| ---------------- | --------------- |
+| Trigger          | `md:hidden` hamburger button, `aria-label` + `aria-expanded` |
+| Menu panel       | `absolute right-0 top-11 z-50 w-56 md:hidden bg-surface border border-border rounded-xl shadow-lg p-2` |
+| Nav links        | Same `navLinkClass` as desktop — `rounded-full text-sm font-medium` |
+| Overlay          | `fixed inset-0 z-40` click-outside to close |
+
+**Pattern notes:**
+Desktop nav (`hidden md:flex`) only renders when user is authenticated. Mobile menu duplicates the three protected routes and closes on route change.

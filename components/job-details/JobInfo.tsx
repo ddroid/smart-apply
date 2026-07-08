@@ -54,7 +54,7 @@ export function JobInfo({ job }: { job: any }) {
       </div>
 
       {/* 4 Info Cards */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div className="bg-surface border border-border rounded-2xl p-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-success-light flex items-center justify-center shrink-0">
             <DollarSign className="w-5 h-5 text-success" />

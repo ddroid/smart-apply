@@ -35,6 +35,19 @@
   --color-accent-light: #f4eefc;       /* M3 light container background */
   --color-accent-muted: #faf8ff;       /* Very subtle mauve tint */
   --color-accent-foreground: #ffffff;  /* Contrast text on Mauve */
+  --color-lavender: #7287fd;           /* Catppuccin Latte Lavender — logo gradients */
+
+  /* Dark surfaces & macOS window controls */
+  --color-surface-dark: #0f111a;       /* Login panel dark background */
+  --color-window-close: #ff5f56;
+  --color-window-minimize: #ffbd2e;
+  --color-window-maximize: #27c93f;
+
+  /* OAuth provider brand colors (official SVG fills) */
+  --color-google-blue: #4285f4;
+  --color-google-green: #34a853;
+  --color-google-yellow: #fbbc05;
+  --color-google-red: #ea4335;
 
   /* Success — Green & Teal (Catppuccin Latte) */
   --color-success: #40a02b;            /* Green */

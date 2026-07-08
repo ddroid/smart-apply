@@ -80,14 +80,14 @@ export async function getAnalyticsData(userId: string) {
       
     insforge.database
       .from("jobs")
-      .select("found_at")
+      .select("researched_at")
       .eq("user_id", userId)
-      .not("company_research", "is", null)
-      .gte("found_at", sevenDaysAgo.toISOString())
+      .not("researched_at", "is", null)
+      .gte("researched_at", sevenDaysAgo.toISOString())
   ]);
 
   const jobsData = formatTrendData(jobsFound || [], "found_at");
-  const researchData = formatTrendData(researched || [], "found_at");
+  const researchData = formatTrendData(researched || [], "researched_at");
   const scoreData = formatScoreData(jobsFound || []);
 
   return { jobsData, researchData, scoreData };

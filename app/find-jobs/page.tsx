@@ -3,23 +3,14 @@ import { Footer } from "@/components/layout/Footer";
 import { FindJobsClient } from "@/components/find-jobs/FindJobsClient";
 import { createInsforgeServer } from "@/lib/insforge-server";
 import { redirect } from "next/navigation";
-import { createPostHogServer } from "@/lib/posthog-server";
 
 export default async function FindJobsPage() {
   const insforge = await createInsforgeServer();
-  const { data: { user }, error } = await insforge.auth.getCurrentUser();
+  const { data: { user } } = await insforge.auth.getCurrentUser();
 
   if (!user) {
     redirect("/login");
   }
-
-  const posthog = createPostHogServer();
-  posthog.capture({
-    distinctId: user.id,
-    event: "find_jobs_viewed",
-    properties: { email: user.email },
-  });
-  await posthog.shutdown();
 
   const { data: initialJobs } = await insforge.database
     .from("jobs")

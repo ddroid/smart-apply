@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
   const posthog = createPostHogServer();
   let session;
   let stagehand: Stagehand | null = null;
+  let runId: string | null = null;
+  let userId: string | null = null;
   
   try {
     const { jobId } = await req.json();
@@ -33,6 +35,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    userId = user.id;
+
     // Load job and profile data
     const { data: job, error: jobError } = await insforge.database
       .from("jobs")
@@ -44,6 +48,8 @@ export async function POST(req: NextRequest) {
     if (jobError || !job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
     }
+
+    runId = job.run_id ?? null;
 
     const { data: profile, error: profileError } = await insforge.database
       .from("profiles")
@@ -271,7 +277,10 @@ Work history: ${JSON.stringify(profile.work_experience)}`;
     // Update the DB
     const { error: updateError } = await insforge.database
       .from("jobs")
-      .update({ company_research: dossier })
+      .update({
+        company_research: dossier,
+        researched_at: new Date().toISOString(),
+      })
       .eq("id", jobId)
       .eq("user_id", user.id);
 
@@ -289,6 +298,15 @@ Work history: ${JSON.stringify(profile.work_experience)}`;
     return NextResponse.json({ dossier });
   } catch (error: any) {
     console.error("Research agent error:", error);
+    if (runId && userId) {
+      const insforge = await createInsforgeServer();
+      await insforge.database.from("agent_logs").insert([{
+        run_id: runId,
+        user_id: userId,
+        message: `Company research failed: ${error.message || String(error)}`,
+        level: "error",
+      }]);
+    }
     return NextResponse.json({ error: error.message || "Failed to research company." }, { status: 500 });
   } finally {
     await posthog.shutdown();

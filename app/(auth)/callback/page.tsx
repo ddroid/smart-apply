@@ -51,27 +51,16 @@ export default function CallbackPage() {
             throw new Error("Failed to persist session cookies on server.");
           }
 
-          posthog.capture("login_completed", {
-            user_id: data.user.id,
-            email: data.user.email,
-          });
-
           const params = new URLSearchParams(window.location.search);
           const next = params.get("next") || "/dashboard";
           router.push(next);
         } else {
-          posthog.capture("login_failed", { reason: "no_session" });
           setError("No user session found. Please try logging in again.");
           setTimeout(() => router.push("/login?error=no_session"), 3000);
         }
       } catch (err) {
         if (!active) return;
         console.error("[auth/callback]", err);
-        posthog.capture("login_failed", {
-          reason: "unexpected_error",
-          error_message: err instanceof Error ? err.message : String(err),
-        });
-        posthog.captureException(err);
         setError("An unexpected error occurred during redirect processing.");
         setTimeout(() => router.push("/login?error=unexpected"), 3000);
       }
@@ -87,7 +76,7 @@ export default function CallbackPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       <div className="w-full max-w-md bg-surface rounded-2xl p-8 shadow-[0px_1px_3px_1px_rgba(0,0,0,0.05),0px_1px_2px_0px_rgba(0,0,0,0.1)] border border-border text-center flex flex-col items-center gap-6">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-accent to-[#7287fd] flex items-center justify-center text-white font-bold text-xl shadow-sm">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-accent to-lavender flex items-center justify-center text-white font-bold text-xl shadow-sm">
           JP
         </div>
         

@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import posthog from "posthog-js";
 
-export function Hero() {
+type HeroProps = {
+  ctaHref: string;
+};
+
+export function Hero({ ctaHref }: HeroProps) {
   return (
     <section className="relative w-full pt-16 pb-20 px-6 overflow-hidden flex flex-col items-center">
       {/* Premium glowing background mesh */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1000px] h-[450px] bg-gradient-to-tr from-accent/10 via-[#7287fd]/15 to-accent-light/35 blur-[100px] rounded-full -z-10" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1000px] h-[450px] bg-gradient-to-tr from-accent/10 via-lavender/15 to-accent-light/35 blur-[100px] rounded-full -z-10" />
 
       {/* Main Content */}
       <div className="max-w-[800px] text-center flex flex-col items-center gap-6 z-10">
@@ -18,15 +21,14 @@ export function Hero() {
         </h1>
         
         <p className="text-base sm:text-lg text-text-secondary max-w-[640px] leading-relaxed font-normal">
-          Stop applying blind. JobPilot finds the jobs, researches the companies, and
+          Stop applying blind. Smart Apply finds the jobs, researches the companies, and
           gives you everything you need to stand out.
         </p>
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto justify-center">
           <Link
-            href="/login"
-            onClick={() => posthog.capture("cta_clicked", { location: "hero", cta: "get_started" })}
+            href={ctaHref}
             className="px-6 py-3 rounded-full text-sm font-medium bg-overlay hover:bg-overlay-dark text-white flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-98"
           >
             Get Started
@@ -39,8 +41,7 @@ export function Hero() {
             </svg>
           </Link>
           <Link
-            href="/login"
-            onClick={() => posthog.capture("cta_clicked", { location: "hero", cta: "find_first_match" })}
+            href={ctaHref}
             className="px-6 py-3 rounded-full text-sm font-medium border border-border-light hover:bg-accent-light text-accent transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 active:scale-98 bg-surface"
           >
             Find Your First Match
@@ -55,9 +56,9 @@ export function Hero() {
           <div className="w-full h-10 px-4 flex items-center bg-surface-secondary border-b border-border gap-3 select-none">
             {/* Window Controls */}
             <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-              <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-              <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+              <div className="w-3 h-3 rounded-full bg-window-close" />
+              <div className="w-3 h-3 rounded-full bg-window-minimize" />
+              <div className="w-3 h-3 rounded-full bg-window-maximize" />
             </div>
             {/* Address Bar */}
             <div className="flex-1 max-w-[480px] mx-auto h-6 rounded-md bg-surface border border-border flex items-center justify-center gap-1.5 text-xs text-text-muted">
@@ -77,7 +78,7 @@ export function Hero() {
           <div className="relative w-full aspect-[4788/2416] bg-surface-tertiary">
             <Image
               src="/images/dashboard-demo.png"
-              alt="JobPilot Dashboard Overview"
+              alt="Smart Apply dashboard overview"
               fill
               priority
               className="object-cover"

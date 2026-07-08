@@ -32,10 +32,10 @@ export async function RecentActivity({ userId }: { userId: string }) {
 
     insforge.database
       .from("jobs")
-      .select("id, company, found_at")
+      .select("id, company, researched_at")
       .eq("user_id", userId)
       .not("company_research", "is", null)
-      .order("found_at", { ascending: false })
+      .order("researched_at", { ascending: false })
       .limit(10)
   ]);
 
@@ -53,8 +53,8 @@ export async function RecentActivity({ userId }: { userId: string }) {
     ...rawJobs.map((j) => ({
       id: `job-${j.id}`,
       title: `Researched ${j.company || "company"}`,
-      timeStr: formatTimeAgo(j.found_at),
-      rawDate: new Date(j.found_at || Date.now()).getTime(),
+      timeStr: formatTimeAgo(j.researched_at),
+      rawDate: new Date(j.researched_at || Date.now()).getTime(),
       type: "info"
     }))
   ];

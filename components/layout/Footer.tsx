@@ -7,10 +7,10 @@ export function Footer() {
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left Side: Logo & Brand */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative w-8 h-8 flex items-center justify-center rounded-xl bg-gradient-to-br from-accent to-[#7287fd] shadow-sm transition-transform duration-200 group-hover:scale-105">
+          <div className="relative w-8 h-8 flex items-center justify-center rounded-xl bg-gradient-to-br from-accent to-lavender shadow-sm transition-transform duration-200 group-hover:scale-105">
             <Image
               src="/logo.png"
-              alt="JobPilot Logo"
+              alt="Smart Apply logo"
               width={20}
               height={20}
               className="object-contain invert brightness-200"
@@ -18,7 +18,7 @@ export function Footer() {
             />
           </div>
           <span className="text-base font-bold text-text-primary tracking-tight">
-            JobPilot
+            Smart Apply
           </span>
         </Link>
 

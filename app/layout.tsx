@@ -9,8 +9,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "JobPilot - AI-Powered Job Hunting Assistant",
-  description: "JobPilot discovers jobs, scores them against your profile, and researches companies automatically.",
+  title: "Smart Apply",
+  description: "Smart Apply discovers jobs, scores them against your profile, and researches companies automatically.",
 };
 
 export default function RootLayout({

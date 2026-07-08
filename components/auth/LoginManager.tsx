@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { insforge } from "@/lib/insforge-client";
-import posthog from "posthog-js";
 
 export function LoginManager() {
   const router = useRouter();
@@ -48,7 +47,6 @@ export function LoginManager() {
   }, [router]);
 
   const handleOAuthLogin = async (provider: "google" | "github") => {
-    posthog.capture("login_started", { provider });
     try {
       setLoadingProvider(provider);
       setErrorMessage(null);
@@ -64,11 +62,6 @@ export function LoginManager() {
       if (data?.url) window.location.assign(data.url);
     } catch (err: any) {
       console.error(`[login/${provider}]`, err);
-      posthog.capture("login_oauth_failed", {
-        provider,
-        error_message: err.message,
-      });
-      posthog.captureException(err);
       setErrorMessage(err.message || `Failed to sign in with ${provider}.`);
       setLoadingProvider(null);
     }
@@ -87,19 +80,19 @@ export function LoginManager() {
         ) : (
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
-              fill="#4285F4"
+              fill="var(--color-google-blue)"
               d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.49 3.77v3.12h4.02c2.36-2.17 3.72-5.37 3.72-9.14z"
             />
             <path
-              fill="#34A853"
+              fill="var(--color-google-green)"
               d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-4.02-3.12c-1.12.75-2.55 1.19-3.94 1.19-3.03 0-5.6-2.05-6.51-4.82H1.31v3.23A12 12 0 0 0 12 24z"
             />
             <path
-              fill="#FBBC05"
+              fill="var(--color-google-yellow)"
               d="M5.49 14.34A7.13 7.13 0 0 1 5 12c0-.83.14-1.64.41-2.39V6.38H1.31A12 12 0 0 0 0 12c0 2.22.6 4.3 1.66 6.13l3.83-3.79z"
             />
             <path
-              fill="#EA4335"
+              fill="var(--color-google-red)"
               d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42A11.92 11.92 0 0 0 12 0 12 12 0 0 0 1.31 6.38l3.83 3.79c.91-2.77 3.48-4.82 6.51-4.82z"
             />
           </svg>
@@ -157,7 +150,7 @@ export function LoginManager() {
           <Link href="/" className="flex items-center group">
             <Image
               src="/logo.png"
-              alt="JobPilot Logo"
+              alt="Smart Apply logo"
               width={159}
               height={54}
               priority
@@ -194,7 +187,7 @@ export function LoginManager() {
       </div>
 
       {/* Right Fluid Art & Editorial Panel (Dark background) */}
-      <div className="hidden lg:flex lg:flex-1 bg-[#0f111a] text-white p-16 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:flex-1 bg-surface-dark text-white p-16 flex-col justify-between relative overflow-hidden">
         {/* Animated Fluid Blob backgrounds using Catppuccin Latte Lime and Yellow tokens */}
         <div className="absolute w-[350px] h-[350px] rounded-full bg-gradient-to-tr from-latte-lime to-latte-yellow opacity-20 blur-[90px] -top-20 -left-20 animate-pulse duration-[6000ms]" />
         <div className="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-latte-yellow to-latte-lime opacity-25 blur-[100px] -bottom-20 -right-10 animate-pulse duration-[8000ms]" />
@@ -228,7 +221,7 @@ export function LoginManager() {
         </div>
 
         <div className="text-xs text-white/35 font-light relative z-10">
-          © 2026 JobPilot Inc. All rights reserved.
+          © 2026 Smart Apply. All rights reserved.
         </div>
       </div>
     </div>

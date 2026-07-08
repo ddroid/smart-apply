@@ -21,6 +21,14 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# NEXT_PUBLIC_* vars must be available at build time for client bundle inlining
+ARG NEXT_PUBLIC_INSFORGE_URL
+ARG NEXT_PUBLIC_INSFORGE_ANON_KEY
+ARG NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN
+ENV NEXT_PUBLIC_INSFORGE_URL=$NEXT_PUBLIC_INSFORGE_URL
+ENV NEXT_PUBLIC_INSFORGE_ANON_KEY=$NEXT_PUBLIC_INSFORGE_ANON_KEY
+ENV NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=$NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN
+
 RUN npm run build
 
 # Production image, copy all the files and run next

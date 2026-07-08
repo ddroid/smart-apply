@@ -8,6 +8,7 @@ import { JobInfo } from "@/components/job-details/JobInfo";
 import { MatchScore } from "@/components/job-details/MatchScore";
 import { JobDescription } from "@/components/job-details/JobDescription";
 import { CompanyResearch } from "@/components/job-details/CompanyResearch";
+import { AdzunaCredit } from "@/components/find-jobs/AdzunaCredit";
 
 export default async function JobDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -46,16 +47,21 @@ export default async function JobDetailsPage({ params }: { params: Promise<{ id:
         <JobDescription job={job} />
         <CompanyResearch jobId={job.id} companyName={job.company} initialDossier={job.company_research} />
 
-        {/* Apply Now Bottom Button */}
-        <div className="w-full max-w-[1024px] mx-auto mt-2 mb-12">
-          <a
-            href={job.external_apply_url || job.source_url || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center w-full py-4 bg-accent hover:bg-accent-dark text-white rounded-xl text-base font-bold transition-colors shadow-sm"
-          >
-            Apply Now at {job.company}
-          </a>
+        {job.external_apply_url || job.source_url ? (
+          <div className="w-full max-w-[1024px] mx-auto mt-2 mb-4">
+            <a
+              href={job.external_apply_url || job.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-full py-4 bg-accent hover:bg-accent-dark text-white rounded-xl text-base font-bold transition-colors shadow-sm"
+            >
+              Apply Now at {job.company}
+            </a>
+          </div>
+        ) : null}
+
+        <div className="w-full max-w-[1024px] mx-auto mb-12">
+          <AdzunaCredit />
         </div>
       </main>
 

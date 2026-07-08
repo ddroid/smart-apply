@@ -10,6 +10,7 @@ export type JobType = {
   title: string;
   match_score: number;
   salary: string | null;
+  source?: "search" | "url";
   posted_at?: string;
   found_at: string;
 };

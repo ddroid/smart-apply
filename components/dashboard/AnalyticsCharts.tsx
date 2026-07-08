@@ -23,15 +23,15 @@ export function JobsFoundChart({ data }: { data: ChartData }) {
           <AreaChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorJobs" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8839ef" stopOpacity={0.15}/>
-                <stop offset="95%" stopColor="#8839ef" stopOpacity={0}/>
+                <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.15}/>
+                <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} />
             <Tooltip />
-            <Area type="monotone" dataKey="value" stroke="#8839ef" strokeWidth={3} fillOpacity={1} fill="url(#colorJobs)" />
+            <Area type="monotone" dataKey="value" stroke="var(--color-accent)" strokeWidth={3} fillOpacity={1} fill="url(#colorJobs)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -50,7 +50,7 @@ export function CompanyResearchChart({ data }: { data: ChartData }) {
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} />
             <Tooltip cursor={{ fill: "var(--color-surface-secondary)", opacity: 0.4 }} />
-            <Bar dataKey="value" fill="#1e66f5" radius={[4, 4, 0, 0]} maxBarSize={40} />
+            <Bar dataKey="value" fill="var(--color-info)" radius={[4, 4, 0, 0]} maxBarSize={40} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -69,7 +69,7 @@ export function MatchScoreChart({ data }: { data: ChartData }) {
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} dy={10} />
             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "var(--color-text-muted)" }} />
             <Tooltip cursor={{ fill: "var(--color-surface-secondary)", opacity: 0.4 }} />
-            <Bar dataKey="value" fill="#40a02b" radius={[4, 4, 0, 0]} maxBarSize={40} />
+            <Bar dataKey="value" fill="var(--color-success)" radius={[4, 4, 0, 0]} maxBarSize={40} />
           </BarChart>
         </ResponsiveContainer>
       </div>

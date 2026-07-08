@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createInsforgeServer } from "@/lib/insforge-server";
-import { searchJobs } from "@/lib/adzuna";
+import { detectAdzunaCountry, searchJobs } from "@/lib/adzuna";
 import { generateObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
@@ -52,17 +52,19 @@ export async function POST(req: NextRequest) {
     });
 
     // Fetch from Adzuna
-    console.log(`Searching Adzuna for: title=${jobTitle}, location=${location}`);
-    const adzunaJobs = await searchJobs(jobTitle, location);
+    const country = detectAdzunaCountry(location || "");
+    console.log(`Searching Adzuna for: title=${jobTitle}, location=${location}, country=${country}`);
+    const adzunaJobs = await searchJobs(jobTitle, location, country);
     console.log(`Adzuna returned ${adzunaJobs.length} jobs.`);
 
     if (adzunaJobs.length === 0) {
       // Empty stream
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
-        start(controller) {
+        async start(controller) {
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
+          await posthog.shutdown();
         }
       });
       return new Response(stream, { headers: { "Content-Type": "text/event-stream" } });
@@ -153,6 +155,12 @@ export async function POST(req: NextRequest) {
 
             if (saveError) {
               console.error("Failed to save job:", saveError);
+              await insforge.database.from("agent_logs").insert([{
+                run_id: runId,
+                user_id: user.id,
+                message: `Failed to save job "${job.title}": ${saveError.message}`,
+                level: "error",
+              }]);
               continue;
             }
 
@@ -165,6 +173,7 @@ export async function POST(req: NextRequest) {
               properties: {
                 jobId: savedJob.id,
                 runId: runId,
+                source: "search",
                 matchScore: scoredJob.matchScore,
               },
             });
@@ -178,6 +187,12 @@ export async function POST(req: NextRequest) {
             await new Promise(resolve => setTimeout(resolve, 500));
           } catch (err) {
             console.error(`Error processing job ${job.title}:`, err);
+            await insforge.database.from("agent_logs").insert([{
+              run_id: runId,
+              user_id: user.id,
+              message: `Error processing job "${job.title}": ${err instanceof Error ? err.message : String(err)}`,
+              level: "error",
+            }]);
           }
         }
 
@@ -194,6 +209,7 @@ export async function POST(req: NextRequest) {
         // Close stream
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
+        await posthog.shutdown();
       },
     });
 

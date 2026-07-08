@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import posthog from "posthog-js";
 
-export function BottomCTA() {
+type BottomCTAProps = {
+  ctaHref: string;
+};
+
+export function BottomCTA({ ctaHref }: BottomCTAProps) {
   return (
     <section className="relative w-full py-24 px-6 overflow-hidden flex flex-col items-center border-t border-border">
       {/* Background glow effects */}
       <div className="absolute inset-x-0 bottom-0 h-full w-full bg-gradient-to-t from-accent-light/30 via-background/10 to-background -z-10" />
-      <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[300px] bg-gradient-to-tr from-accent/5 via-[#7287fd]/10 to-accent-light/25 blur-[90px] rounded-full -z-10" />
+      <div className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[300px] bg-gradient-to-tr from-accent/5 via-lavender/10 to-accent-light/25 blur-[90px] rounded-full -z-10" />
 
       {/* Content */}
       <div className="max-w-[700px] text-center flex flex-col items-center gap-6 z-10">
@@ -24,8 +27,7 @@ export function BottomCTA() {
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto justify-center">
           <Link
-            href="/login"
-            onClick={() => posthog.capture("cta_clicked", { location: "bottom_cta", cta: "get_started" })}
+            href={ctaHref}
             className="px-6 py-3 rounded-full text-sm font-medium bg-overlay hover:bg-overlay-dark text-white flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-98"
           >
             Get Started
@@ -38,8 +40,7 @@ export function BottomCTA() {
             </svg>
           </Link>
           <Link
-            href="/login"
-            onClick={() => posthog.capture("cta_clicked", { location: "bottom_cta", cta: "find_first_match" })}
+            href={ctaHref}
             className="px-6 py-3 rounded-full text-sm font-medium border border-border-light hover:bg-accent-light text-accent transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 active:scale-98 bg-surface"
           >
             Find Your First Match

@@ -1,6 +1,16 @@
 import { AlertCircle } from "lucide-react";
 
-export function ProfileAlert() {
+type ProfileAlertProps = {
+  percentage: number;
+  missingFields: string[];
+};
+
+const CIRCLE_CIRCUMFERENCE = 251.2;
+
+export function ProfileAlert({ percentage, missingFields }: ProfileAlertProps) {
+  const strokeDashoffset =
+    CIRCLE_CIRCUMFERENCE - (CIRCLE_CIRCUMFERENCE * percentage) / 100;
+
   return (
     <div className="bg-surface border border-error/20 rounded-2xl p-6 shadow-[0px_1px_3px_1px_rgba(0,0,0,0.05),0px_1px_2px_0px_rgba(0,0,0,0.1)] flex items-center justify-between w-full max-w-3xl mx-auto mb-6">
       <div className="flex flex-col gap-2">
@@ -14,20 +24,20 @@ export function ProfileAlert() {
           Complete the missing fields to improve your chance of getting
           tailored matches and generating quality resumes.
         </p>
-        <div className="flex items-center gap-2 mt-2">
-          <span className="px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider">
-            Phone
-          </span>
-          <span className="px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider">
-            Location
-          </span>
-          <span className="px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider">
-            Education
-          </span>
-        </div>
+        {missingFields.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            {missingFields.map((field) => (
+              <span
+                key={field}
+                className="px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider"
+              >
+                {field}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
-        {/* Simple SVG circle progress */}
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
           <circle
             cx="50"
@@ -44,12 +54,14 @@ export function ProfileAlert() {
             fill="transparent"
             stroke="var(--color-error)"
             strokeWidth="8"
-            strokeDasharray="251.2"
-            strokeDashoffset="75.36" /* 251.2 - (251.2 * 0.7) */
+            strokeDasharray={CIRCLE_CIRCUMFERENCE}
+            strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
           />
         </svg>
-        <span className="absolute text-xl font-bold text-text-primary">70%</span>
+        <span className="absolute text-xl font-bold text-text-primary">
+          {percentage}%
+        </span>
       </div>
     </div>
   );

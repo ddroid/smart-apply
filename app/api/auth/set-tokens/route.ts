@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setAuthCookies } from "@insforge/sdk/ssr";
-import { createPostHogServer } from "@/lib/posthog-server";
 
 export async function POST(req: NextRequest) {
-  const posthog = createPostHogServer();
-  const distinctId = req.headers.get("X-POSTHOG-DISTINCT-ID") ?? "anonymous";
-
   try {
     const { accessToken, refreshToken } = await req.json();
 
@@ -24,23 +20,9 @@ export async function POST(req: NextRequest) {
       refreshToken,
     });
 
-    posthog.capture({
-      distinctId,
-      event: "auth_tokens_set",
-    });
-    await posthog.shutdown();
-
     return response;
   } catch (error) {
     console.error("[api/auth/set-tokens]", error);
-    posthog.capture({
-      distinctId,
-      event: "auth_tokens_set_failed",
-      properties: {
-        error_message: error instanceof Error ? error.message : String(error),
-      },
-    });
-    await posthog.shutdown();
     return NextResponse.json(
       { success: false, error: "Failed to set auth cookies" },
       { status: 500 }

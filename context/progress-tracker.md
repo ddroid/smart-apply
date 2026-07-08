@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Phase 5 — Dashboard
-**Last completed:** 17 Analytics Charts — PostHog Data
-**Next:** Phase 5 Complete / TBD
+**Phase:** Phase 6 — DevOps & Polish
+**Last completed:** 20 Profile Completion & Homepage Polish
+**Next:** TBD
 
 ---
 
@@ -44,9 +44,15 @@ Update this file after every completed feature. Any AI agent reading this should
 - [x] 14 Dashboard Page — Full UI
 - [x] 15 Stats Bar — Real Data
 - [x] 16 Recent Activity — Real Data
-- [x] 17 Analytics Charts — PostHog Data
+- [x] 17 Analytics Charts — DB Data
+- [x] 18 Analytics Cleanup — PostHog + DB
 
----
+### Phase 6 — DevOps & Polish
+
+- [x] 19 DevOps & Design Token Cleanup
+- [x] 20 Profile completion scoring, homepage auth redirect, navbar mobile menu, legal pages, Smart Apply title
+- [x] 21 Find Jobs spec alignment — match filters, SOURCE column, Adzuna credit, country detection
+- [x] 22 PostHog cleanup, agent_logs, researched_at analytics, .env.example, Docker build args
 
 ## Decisions Made During Build
 
@@ -56,6 +62,8 @@ _Add decisions here as they are made during implementation._
 - **Chart Naming Alignment:** Overrode the UI mockup title "Resume Tailoring Activity" with "Company Research Activity" to accurately mirror our underlying event analytics schema in PostHog.
 - **Strict PostHog Compliance:** Deliberately deleted standard page-view tracking (`dashboard_viewed`) to adhere to our rigid `code-standards.md` policy capping the project at only 4 registered events.
 - **Analytics Data Fetching Pivot:** Pivoted away from fetching analytics directly from PostHog via the Query API, and instead built `lib/db-analytics.ts` to aggregate events locally from the `jobs` database table. This eliminates the need for users to provision PostHog Personal API Keys, increases speed, and handles empty states flawlessly.
+- **PostHog Event Cleanup:** Removed undocumented capture calls (login, CTA, page-view, auth route events) from client and server code. Kept only the four registered events plus `posthog.identify` and `posthog.reset`. Set `capture_pageview: false` in both PostHog init files.
+- **researched_at Column:** Added `researched_at` to the `jobs` table so Company Research Activity chart tracks when research completed, not when the job was found. Applied via migration `20260708190000_add-jobs-researched-at.sql`.
 
 ---
 
@@ -80,3 +88,10 @@ _Add decisions here as they are made during implementation._
 - **16 Recent Activity — Real Data:** Upgraded `RecentActivity.tsx` to fetch the top 10 rows from both `agent_runs` and `jobs` (where `company_research` is present). Merged, formatted, and sorted the results in-memory into a unified timeline capped at the top 5 recent events.
 - **SDK Drift:** Handled `insforge.auth.getUser()` and `insforge.from()` crashing by updating method calls to match the project's exact installed `@insforge/sdk` version (`insforge.auth.getCurrentUser()` and `insforge.database.from()`).
 - **17 Analytics Charts — DB Data (Pivot):** Swapped out PostHog queries for native InsForge database aggregations in `lib/db-analytics.ts` after determining it provides a simpler, keyless experience for the user. `app/dashboard/page.tsx` now calls `Promise.all` directly against the database to calculate historical counts (Jobs Found, Company Research) and Match Score buckets in-memory before streaming them down to the modified `AnalyticsCharts.tsx` Client Components.
+- **18 Profile Completion Logic:** Added `lib/profile-completion.ts` with `computeProfileCompletion()` scoring 12 required fields. `saveProfileInfo` sets `is_complete` only when all fields pass, revalidates `/dashboard`, and fires `profile_completed` PostHog on first completion. Profile page ProfileAlert now shows live percentage and missing field tags.
+- **19 Homepage Auth Redirect:** `app/page.tsx` is an async Server Component that redirects authenticated users to `/dashboard`. Hero and BottomCTA accept a `ctaHref` prop (login for unauthenticated visitors).
+- **20 Navbar Mobile Menu:** Nav links hidden when logged out. Mobile hamburger menu exposes Dashboard, Find Jobs, and Profile when logged in. Removed client-side `sign_out` PostHog capture (kept `posthog.reset()` on logout).
+- **21 Legal Pages:** Added `/privacy-policy` and `/terms-and-conditions` with Navbar + Footer layout.
+- **19 DevOps & Design Token Cleanup:** Created `.env.example` documenting all required environment variables (with note that `OPENAI_API_KEY` holds the Groq key). Removed unreferenced `public/left.svg`, `public/right.svg`, and `public/logo.svg`. Replaced hardcoded hex values in `Hero.tsx`, `BottomCTA.tsx`, `Footer.tsx`, `LoginManager.tsx`, and `app/(auth)/callback/page.tsx` with design tokens added to `globals.css` (`lavender`, `surface-dark`, window controls, Google OAuth brand colors). Updated `Dockerfile` builder stage with `ARG`/`ENV` for `NEXT_PUBLIC_INSFORGE_URL`, `NEXT_PUBLIC_INSFORGE_ANON_KEY`, and `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` before `npm run build`.
+- **18 Analytics Cleanup — PostHog + DB:** Removed undocumented PostHog capture calls from auth, homepage, navbar, find-jobs page, and auth API routes. Added `source: "search"` to `job_found` events, `posthog.shutdown()` after find route streams, `researched_at` column for research chart accuracy, agent_logs error writes in find/research routes, CSS var colors in AnalyticsCharts, and `capture_pageview: false` in PostHog init.
+- **11 Filter + Sort + Pagination (Rewrite):** Simplified `JobList.tsx` per build plan — match filter dropdown (All/High ≥70/Low <70), sort by Match Score/Newest/Oldest, 20 items per page, SOURCE column with Search/URL badges, text search retained. Removed YouTube-style modal filters and role pills. Added `detectAdzunaCountry()` in `lib/adzuna.ts` for UK/GB→gb, Canada→ca, Australia→au, etc. (default us), wired into find route. Added `AdzunaCredit` component on job list and details page. Fixed job details info cards responsive grid (`grid-cols-2 md:grid-cols-4`). Apply Now button hidden when no redirect URL.
